@@ -1,0 +1,173 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+
+const Envelope = ({ onComplete }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => {
+    if (isOpen) return; // Prevent double clicks
+    setIsOpen(true);
+    // Wait for the envelope flap to open and the letter to slide up
+    setTimeout(onComplete, 2200); 
+  };
+
+  // Rustic Kraft Paper Colors
+  const kraftBase = '#C29C71';   // Side flaps
+  const kraftShadow = '#B0885A'; // Bottom flap
+  const kraftTop = '#A67C4D';    // Top flap (slightly darker to show shadow)
+  const kraftInside = '#8C663D'; // Inside the envelope
+
+  return (
+    <div 
+      onClick={handleOpen}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100vh',
+        backgroundColor: kraftInside,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        margin: 0,
+        padding: 0
+      }}
+    >
+      {/* 1. The White Letter (Hidden inside, slides up when opened) */}
+      <motion.div 
+        style={{
+          position: 'absolute',
+          top: '20%',
+          left: '10%',
+          right: '10%',
+          bottom: '10%',
+          backgroundColor: '#FFF',
+          borderRadius: '8px 8px 0 0',
+          boxShadow: '0 -5px 15px rgba(0,0,0,0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          paddingTop: '50px', // Adjusted to balance the stacked text
+          zIndex: 5 // Sits behind the front flaps
+        }}
+        animate={isOpen ? { y: '-10vh', opacity: 1 } : { y: '20vh', opacity: 0 }}
+        transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
+      >
+        {/* Stacked Names for better mobile readability */}
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center',
+          fontFamily: "'Great Vibes', cursive", 
+          color: '#B59461',
+          lineHeight: '1.2'
+        }}>
+          <span style={{ fontSize: '36px' }}>Anuruddha</span>
+          <span style={{ fontSize: '24px', margin: '4px 0' }}>&</span>
+          <span style={{ fontSize: '36px' }}>Yasara</span>
+        </div>
+      </motion.div>
+
+      {/* 2. Left Flap */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
+        backgroundColor: kraftBase,
+        clipPath: 'polygon(0 0, 50% 50%, 0 100%)',
+        zIndex: 10
+      }} />
+
+      {/* 3. Right Flap */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
+        backgroundColor: kraftBase,
+        clipPath: 'polygon(100% 0, 50% 50%, 100% 100%)',
+        zIndex: 10
+      }} />
+
+      {/* 4. Bottom Flap (Overlaps the side flaps slightly) */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
+        backgroundColor: kraftShadow,
+        clipPath: 'polygon(0 100%, 50% 50%, 100% 100%)',
+        zIndex: 15
+      }} />
+
+      {/* 5. Top Flap (This is the part that animates open!) */}
+      <motion.div 
+        style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
+          backgroundColor: kraftTop,
+          clipPath: 'polygon(0 0, 100% 0, 50% 52%)', 
+          transformOrigin: 'top',
+          zIndex: isOpen ? 0 : 20 
+        }}
+        animate={isOpen ? { rotateX: 180 } : { rotateX: 0 }}
+        transition={{ duration: 0.9, ease: "easeInOut" }}
+      />
+
+      {/* 6. The White "You are Invited" Seal */}
+      {!isOpen && (
+        <motion.div 
+          style={{
+            position: 'absolute',
+            top: '52%', 
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 30,
+            pointerEvents: 'none' 
+          }}
+          exit={{ opacity: 0, scale: 0.8 }}
+        >
+          <div style={{
+            width: '140px',
+            height: '140px',
+            borderRadius: '50%',
+            border: '2px solid white',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'transparent'
+          }}>
+            <span style={{ 
+              color: 'white', 
+              fontFamily: "'Great Vibes', cursive", 
+              fontSize: '32px', 
+              lineHeight: '1',
+              textAlign: 'center',
+              textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}>
+              You are<br/>Invited
+            </span>
+            <span style={{ color: 'white', marginTop: '5px', fontSize: '18px' }}>
+              ✿
+            </span>
+          </div>
+        </motion.div>
+      )}
+
+      {/* 7. The BOLD BLACK Text as requested */}
+      {!isOpen && (
+        <div style={{
+          position: 'absolute',
+          bottom: '10%',
+          width: '100%',
+          textAlign: 'center',
+          zIndex: 30,
+          pointerEvents: 'none'
+        }}>
+          <span style={{
+            color: 'black', 
+            fontWeight: '900', 
+            fontSize: '16px',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            fontFamily: 'sans-serif'
+          }}>
+            Tap to open your invitation
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Envelope;

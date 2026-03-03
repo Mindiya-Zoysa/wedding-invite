@@ -1,23 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import HeartCover from './components/HeartCover';
+import Envelope from './components/Envelope'; // Make sure this file exists from before
+import MainPage from './components/MainPage';
 
 function App() {
+  const [step, setStep] = useState('heart');
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {step === 'heart' && (
+        <HeartCover onFinish={() => setStep('envelope')} />
+      )}
+      
+      {step === 'envelope' && (
+        <Envelope onComplete={() => setStep('main')} />
+      )}
+
+      {step === 'main' && (
+        <MainPage /> 
+      )}
     </div>
   );
 }
