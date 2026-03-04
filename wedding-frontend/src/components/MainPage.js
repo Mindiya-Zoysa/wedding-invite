@@ -73,6 +73,8 @@ const MainPage = () => {
   const [isAtRsvp, setIsAtRsvp] = useState(false);
 
   useEffect(() => {
+    const currentRef = rsvpRef.current;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsAtRsvp(entry.isIntersecting);
@@ -80,12 +82,12 @@ const MainPage = () => {
       { threshold: 0.3 } // Triggers when 30% of the RSVP section is visible
     );
 
-    if (rsvpRef.current) {
-      observer.observe(rsvpRef.current);
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (rsvpRef.current) observer.unobserve(rsvpRef.current);
+      if (currentRef) observer.unobserve(currentRef);
     };
   }, []);
 
@@ -339,17 +341,6 @@ const MainPage = () => {
 
           <form onSubmit={handleRsvpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
             
-            <div>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
-              <input type="text" name="name" required value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
-            </div>
-
-            {/* NEW: Telephone Input */}
-            <div>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Telephone / WhatsApp No *</label>
-              <input type="tel" name="phone" required value={rsvpData.phone} onChange={handleRsvpChange} placeholder="+94 77 123 4567" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
-            </div>
-
             {/* NEW: Which Side Selection */}
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '10px' }}>Which side are you from? *</label>
@@ -383,6 +374,17 @@ const MainPage = () => {
                   Groom's Side (Anuruddha)
                 </button>
               </div>
+            </div>
+            
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
+              <input type="text" name="name" required value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+            </div>
+
+            {/* NEW: Telephone Input */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Telephone / WhatsApp No *</label>
+              <input type="tel" name="phone" required value={rsvpData.phone} onChange={handleRsvpChange} placeholder="+94 77 123 4567" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
             </div>
 
             <div>
