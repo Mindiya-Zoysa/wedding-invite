@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
 import { Instagram, Facebook, Twitter, MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
@@ -115,10 +116,61 @@ const MainPage = () => {
     setRsvpData({ ...rsvpData, [e.target.name]: e.target.value });
   };
 
-  const handleRsvpSubmit = (e) => {
+  const handleRsvpSubmit = async (e) => {
     e.preventDefault();
-    console.log("RSVP Data Submitted:", rsvpData);
-    alert(`Thank you, ${rsvpData.name}! Your RSVP has been received.`);
+    
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/rsvp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(rsvpData) 
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // --- BEAUTIFUL SUCCESS ALERT ---
+        Swal.fire({
+          title: 'Thank You!',
+          text: `We have received your RSVP, ${rsvpData.name}.`,
+          icon: 'success',
+          confirmButtonColor: '#B59461',
+          confirmButtonText: 'Great!'
+        });
+        
+        // Clear the form after successful submission
+        setRsvpData({
+          name: '',
+          phone: '',
+          side: '',
+          attending: 'yes',
+          message: ''
+        });
+        
+      } else {
+        // --- VALIDATION ERROR ALERT ---
+        Swal.fire({
+          title: 'Oops...',
+          text: 'There was a problem submitting your RSVP. Please check the form.',
+          icon: 'error',
+          confirmButtonColor: '#B59461'
+        });
+        console.error("Validation Errors:", result.errors);
+      }
+
+    } catch (error) {
+      // --- NETWORK ERROR ALERT ---
+      Swal.fire({
+        title: 'Connection Error',
+        text: 'Could not connect to the server. Please try again later.',
+        icon: 'error',
+        confirmButtonColor: '#B59461'
+      });
+      console.error("Network Error:", error);
+    }
   };
 
   const copyToClipboard = () => {
@@ -126,6 +178,7 @@ const MainPage = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  
 
   return (
     <div style={{ backgroundColor: '#FDFBF7', margin: 0, padding: 0, overflowX: 'hidden' }}>
@@ -375,7 +428,7 @@ const MainPage = () => {
                 </button>
               </div>
             </div>
-            
+
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
               <input type="text" name="name" required value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
