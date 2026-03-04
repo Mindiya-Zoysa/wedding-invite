@@ -36,7 +36,7 @@ const Envelope = ({ onComplete }) => {
       <motion.div 
         style={{
           position: 'absolute',
-          top: '20%',
+          top: '13%',
           left: '10%',
           right: '10%',
           bottom: '10%',
@@ -50,7 +50,7 @@ const Envelope = ({ onComplete }) => {
           zIndex: 5 // Sits behind the front flaps
         }}
         animate={isOpen ? { y: '-10vh', opacity: 1 } : { y: '20vh', opacity: 0 }}
-        transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
+        transition={{ delay: 2.5, duration: 1, ease: "easeOut" }}
       >
         {/* Stacked Names for better mobile readability */}
         <div style={{ 
@@ -61,7 +61,7 @@ const Envelope = ({ onComplete }) => {
           color: '#B59461',
           lineHeight: '1.2'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
             <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Anuruddha</span>
             <span style={{ fontSize: '24px', margin: '4px 0', color: '#B59461' }}>&</span>
             <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Yasara</span>
@@ -106,7 +106,7 @@ const Envelope = ({ onComplete }) => {
           zIndex: isOpen ? 0 : 20 
         }}
         animate={isOpen ? { rotateX: 180 } : { rotateX: 0 }}
-        transition={{ duration: 5, ease: [0.65, 0, 0.35, 1] }}
+        transition={{ duration: 3.5, ease: [0.65, 0, 0.35, 1] }}
       />
 
       {/* 6. The Wax Seal Stamp */}
