@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Instagram, Facebook, Twitter, MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart } from 'lucide-react';
+import { Instagram, Facebook, Twitter, MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
-// Replace these with your actual image paths once you have them.
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
 const YASARA_PIC = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80";
 const ANURUDDHA_PIC = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80";
@@ -69,13 +68,43 @@ const CountdownTimer = ({ targetDate }) => {
 };
 
 const MainPage = () => {
-  // --- STATE FOR PHASE 4 ---
-  const [activeTab, setActiveTab] = useState('guests'); // 'guests', 'gallery', 'honeymoon'
+  // --- REFS & SCROLL STATE FOR FLOATING BUTTON ---
+  const rsvpRef = useRef(null);
+  const [isAtRsvp, setIsAtRsvp] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsAtRsvp(entry.isIntersecting);
+      },
+      { threshold: 0.3 } // Triggers when 30% of the RSVP section is visible
+    );
+
+    if (rsvpRef.current) {
+      observer.observe(rsvpRef.current);
+    }
+
+    return () => {
+      if (rsvpRef.current) observer.unobserve(rsvpRef.current);
+    };
+  }, []);
+
+  const scrollToRsvpOrTop = () => {
+    if (isAtRsvp) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      rsvpRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // --- STATE FOR TABS & RSVP ---
+  const [activeTab, setActiveTab] = useState('guests');
   const [copied, setCopied] = useState(false);
   
   const [rsvpData, setRsvpData] = useState({
     name: '',
-    email: '',
+    phone: '', // Changed from email to phone
+    side: '',  // Added to track which side they are from
     attending: 'yes',
     message: ''
   });
@@ -88,11 +117,10 @@ const MainPage = () => {
     e.preventDefault();
     console.log("RSVP Data Submitted:", rsvpData);
     alert(`Thank you, ${rsvpData.name}! Your RSVP has been received.`);
-    // You can connect an API endpoint here later to save this to your database
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText("1234567890"); // Replace with your actual account number
+    navigator.clipboard.writeText("1234567890"); 
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -115,7 +143,6 @@ const MainPage = () => {
         color: 'white',
         textAlign: 'center'
       }}>
-        {/* Dark overlay to make text readable */}
         <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.3)', zIndex: 1 }} />
 
         <div style={{ zIndex: 2, padding: '20px' }}>
@@ -143,7 +170,6 @@ const MainPage = () => {
           </motion.div>
         </div>
 
-        {/* Scroll Down Indicator */}
         <motion.div 
           animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }}
           style={{ position: 'absolute', bottom: '40px', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
@@ -163,16 +189,12 @@ const MainPage = () => {
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '40px' }}>
-          
-          {/* Yasara Card */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <motion.div 
               whileHover="hover"
               style={{ position: 'relative', width: '250px', height: '350px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: 'pointer' }}
             >
               <img src={YASARA_PIC} alt="Yasara" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              
-              {/* Hover Quote Overlay */}
               <motion.div 
                 variants={{ hover: { opacity: 1 } }} initial={{ opacity: 0 }} transition={{ duration: 0.3 }}
                 style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(181, 148, 97, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', color: 'white' }}
@@ -182,7 +204,6 @@ const MainPage = () => {
                 </p>
               </motion.div>
             </motion.div>
-            
             <h3 style={{ fontFamily: 'serif', fontSize: '24px', color: '#4A4A4A', marginTop: '20px', marginBottom: '10px' }}>Yasara</h3>
             <div style={{ display: 'flex', gap: '15px', color: '#B59461' }}>
               <Instagram size={20} style={{ cursor: 'pointer' }} />
@@ -190,15 +211,12 @@ const MainPage = () => {
             </div>
           </div>
 
-          {/* Anuruddha Card */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <motion.div 
               whileHover="hover"
               style={{ position: 'relative', width: '250px', height: '350px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: 'pointer' }}
             >
               <img src={ANURUDDHA_PIC} alt="Anuruddha" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              
-              {/* Hover Quote Overlay */}
               <motion.div 
                 variants={{ hover: { opacity: 1 } }} initial={{ opacity: 0 }} transition={{ duration: 0.3 }}
                 style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(181, 148, 97, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', color: 'white' }}
@@ -208,22 +226,18 @@ const MainPage = () => {
                 </p>
               </motion.div>
             </motion.div>
-
             <h3 style={{ fontFamily: 'serif', fontSize: '24px', color: '#4A4A4A', marginTop: '20px', marginBottom: '10px' }}>Anuruddha</h3>
             <div style={{ display: 'flex', gap: '15px', color: '#B59461' }}>
               <Instagram size={20} style={{ cursor: 'pointer' }} />
               <Twitter size={20} style={{ cursor: 'pointer' }} />
             </div>
           </div>
-
         </div>
       </section>
 
       {/* --- COUNTDOWN SECTION --- */}
       <section style={{ padding: '60px 20px', backgroundColor: '#F9F6F0', textAlign: 'center' }}>
         <h2 style={{ fontSize: '28px', fontFamily: 'serif', color: '#B59461', marginBottom: '40px' }}>The Countdown Begins</h2>
-        
-        {/* We use an inline component for the timer logic */}
         <CountdownTimer targetDate="2026-04-11T00:00:00" />
       </section>
 
@@ -241,7 +255,6 @@ const MainPage = () => {
             📅 4:00 PM to 11:00 PM
           </div>
 
-          {/* Google Maps Embed (Replace the src with your actual Google Maps embed link) */}
           <div style={{ width: '100%', height: '300px', borderRadius: '8px', overflow: 'hidden', marginBottom: '30px', border: '1px solid #EAEAEA' }}>
             <iframe 
               title="Wedding Location"
@@ -254,9 +267,7 @@ const MainPage = () => {
             ></iframe>
           </div>
 
-          {/* Action Buttons */}
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '15px' }}>
-            {/* Opens Map in new tab */}
             <a 
               href="https://goo.gl/maps/your-link-here" 
               target="_blank" 
@@ -266,7 +277,6 @@ const MainPage = () => {
               <MapPin size={16} /> Open in Maps
             </a>
             
-            {/* Adds event to Google Calendar automatically */}
             <a 
               href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding+of+Yasara+%26+Anuruddha&dates=20260411T103000Z/20260411T173000Z&details=We+can't+wait+to+celebrate+with+you!&location=Your+Venue+Name" 
               target="_blank" 
@@ -285,7 +295,6 @@ const MainPage = () => {
         <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '50px' }}>Timeline</h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-          {/* Vertical Line */}
           <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '2px', backgroundColor: '#EAEAEA', transform: 'translateX(-50%)' }} />
 
           {[
@@ -297,7 +306,6 @@ const MainPage = () => {
             { time: "11:00 PM", title: "Going Away", desc: "Thank you for celebrating with us" }
           ].map((item, index) => (
             <div key={index} style={{ display: 'flex', width: '100%', marginBottom: '30px', position: 'relative', zIndex: 2 }}>
-              {/* Left Side (Empty for odd, Content for even) */}
               <div style={{ flex: 1, textAlign: 'right', paddingRight: '30px' }}>
                 {index % 2 === 0 ? (
                   <>
@@ -307,11 +315,7 @@ const MainPage = () => {
                   </>
                 ) : null}
               </div>
-
-              {/* Center Dot */}
               <div style={{ width: '16px', height: '16px', backgroundColor: '#B59461', borderRadius: '50%', border: '4px solid #FDFBF7', margin: '0 auto', marginTop: '5px' }} />
-
-              {/* Right Side (Content for odd, Empty for even) */}
               <div style={{ flex: 1, textAlign: 'left', paddingLeft: '30px' }}>
                 {index % 2 !== 0 ? (
                   <>
@@ -326,22 +330,59 @@ const MainPage = () => {
         </div>
       </section>
 
-      {/* --- RSVP SECTION --- */}
-      <section style={{ padding: '80px 20px', backgroundColor: '#F9F6F0' }}>
+      {/* --- RSVP SECTION (UPDATED) --- */}
+      <section ref={rsvpRef} style={{ padding: '80px 20px', backgroundColor: '#F9F6F0' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Join Us</p>
           <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '10px' }}>RSVP</h2>
           <p style={{ color: '#666', fontSize: '14px', marginBottom: '40px' }}>Please let us know if you can join our celebration</p>
 
           <form onSubmit={handleRsvpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
+            
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
               <input type="text" name="name" required value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
             </div>
 
+            {/* NEW: Telephone Input */}
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Email (Optional)</label>
-              <input type="email" name="email" value={rsvpData.email} onChange={handleRsvpChange} placeholder="your.email@example.com" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Telephone / WhatsApp No *</label>
+              <input type="tel" name="phone" required value={rsvpData.phone} onChange={handleRsvpChange} placeholder="+94 77 123 4567" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+            </div>
+
+            {/* NEW: Which Side Selection */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '10px' }}>Which side are you from? *</label>
+              <div style={{ display: 'flex', gap: '15px' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setRsvpData({ ...rsvpData, side: 'yasara' })} 
+                  style={{ 
+                    flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease',
+                    border: rsvpData.side === 'yasara' ? '2px solid #B59461' : '1px solid #DDD', 
+                    backgroundColor: rsvpData.side === 'yasara' ? '#FDFBF7' : 'white', 
+                    color: rsvpData.side === 'yasara' ? '#B59461' : '#555', 
+                    fontWeight: rsvpData.side === 'yasara' ? 'bold' : 'normal',
+                    boxShadow: rsvpData.side === 'yasara' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none'
+                  }}
+                >
+                  Bride's Side (Yasara)
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setRsvpData({ ...rsvpData, side: 'anuruddha' })} 
+                  style={{ 
+                    flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease',
+                    border: rsvpData.side === 'anuruddha' ? '2px solid #B59461' : '1px solid #DDD', 
+                    backgroundColor: rsvpData.side === 'anuruddha' ? '#FDFBF7' : 'white', 
+                    color: rsvpData.side === 'anuruddha' ? '#B59461' : '#555', 
+                    fontWeight: rsvpData.side === 'anuruddha' ? 'bold' : 'normal',
+                    boxShadow: rsvpData.side === 'anuruddha' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none'
+                  }}
+                >
+                  Groom's Side (Anuruddha)
+                </button>
+              </div>
             </div>
 
             <div>
@@ -361,17 +402,15 @@ const MainPage = () => {
               <textarea name="message" value={rsvpData.message} onChange={handleRsvpChange} placeholder="Share your wishes or any special requests..." rows="4" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', fontFamily: 'inherit', boxSizing: 'border-box' }}></textarea>
             </div>
 
-            <button type="submit" style={{ backgroundColor: '#B59461', color: 'white', padding: '15px', border: 'none', borderRadius: '5px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
+            <button type="submit" style={{ backgroundColor: '#B59461', color: 'white', padding: '15px', border: 'none', borderRadius: '5px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', transition: 'background-color 0.3s' }}>
               Submit RSVP
             </button>
           </form>
         </div>
       </section>
 
-      {/* --- INTERACTIVE TABS SECTION (Guest List, Gallery, Honeymoon) --- */}
+      {/* --- INTERACTIVE TABS SECTION --- */}
       <section style={{ padding: '60px 20px', backgroundColor: '#FDFBF7', textAlign: 'center' }}>
-        
-        {/* Tab Navigation */}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
           {['guests', 'gallery', 'honeymoon'].map((tab) => (
             <button 
@@ -394,10 +433,7 @@ const MainPage = () => {
           ))}
         </div>
 
-        {/* Tab Content */}
         <div style={{ maxWidth: '600px', margin: '0 auto', minHeight: '200px' }}>
-          
-          {/* Guest List Tab */}
           {activeTab === 'guests' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Users size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
@@ -414,7 +450,6 @@ const MainPage = () => {
             </motion.div>
           )}
 
-          {/* Gallery Tab */}
           {activeTab === 'gallery' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Camera size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
@@ -432,7 +467,6 @@ const MainPage = () => {
             </motion.div>
           )}
 
-          {/* Honeymoon Fund Tab */}
           {activeTab === 'honeymoon' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Heart size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
@@ -463,6 +497,35 @@ const MainPage = () => {
         <h2 style={{ fontFamily: 'serif', margin: 0, fontSize: '24px' }}>Yasara & Anuruddha</h2>
         <p style={{ fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', color: '#AAA', marginTop: '10px' }}>April 11, 2026</p>
       </footer>
+
+      {/* --- NEW: FLOATING ACTION BUTTON --- */}
+      <motion.button
+        onClick={scrollToRsvpOrTop}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          backgroundColor: '#B59461',
+          color: 'white',
+          border: 'none',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 1000
+        }}
+      >
+        {isAtRsvp ? <ArrowUp size={28} /> : <Mail size={28} />}
+      </motion.button>
+
     </div>
   );
 };
