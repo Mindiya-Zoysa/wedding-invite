@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import waxSeal from '../assets/wax-steal-stamp.png';
 
 const Envelope = ({ onComplete }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -103,45 +104,34 @@ const Envelope = ({ onComplete }) => {
         transition={{ duration: 0.9, ease: "easeInOut" }}
       />
 
-      {/* 6. The White "You are Invited" Seal */}
+      {/* 6. The Wax Seal Stamp */}
       {!isOpen && (
-        <motion.div 
+        <div
           style={{
             position: 'absolute',
-            top: '52%', 
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 30,
-            pointerEvents: 'none' 
-          }}
-          exit={{ opacity: 0, scale: 0.8 }}
-        >
-          <div style={{
-            width: '140px',
-            height: '140px',
-            borderRadius: '50%',
-            border: '2px solid white',
+            inset: 0,
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'transparent'
-          }}>
-            <span style={{ 
-              color: 'white', 
-              fontFamily: "'Great Vibes', cursive", 
-              fontSize: '32px', 
-              lineHeight: '1',
-              textAlign: 'center',
-              textShadow: '0 2px 4px rgba(0,0,0,0.2)'
-            }}>
-              You are<br/>Invited
-            </span>
-            <span style={{ color: 'white', marginTop: '5px', fontSize: '18px' }}>
-              ✿
-            </span>
-          </div>
-        </motion.div>
+            alignItems: 'center',
+            zIndex: 30
+          }}
+        >
+          <motion.img
+            src={waxSeal}
+            alt="Wax Seal"
+            style={{
+              width: '450px',
+              maxWidth: '80vw',
+              height: 'auto',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 12px 25px rgba(0,0,0,0.45))'
+            }}
+            initial={{ scale: 1 }}
+            whileHover={{ scale: 1.06, rotate: 1 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          />
+        </div>
       )}
 
       {/* 7. The BOLD BLACK Text as requested */}
