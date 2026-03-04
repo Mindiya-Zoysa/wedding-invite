@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Rsvp;
 use Illuminate\Http\Request;
+use App\Exports\RsvpExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RsvpController extends Controller
 {
@@ -28,5 +30,12 @@ class RsvpController extends Controller
             'message' => 'RSVP saved successfully!',
             'data' => $rsvp
         ], 201);
+    }
+
+    // --- NEW EXPORT FUNCTION ---
+    public function export() 
+    {
+        // This instantly generates and downloads the file as 'wedding_rsvps.xlsx'
+        return Excel::download(new RsvpExport, 'wedding_rsvps.xlsx');
     }
 }
