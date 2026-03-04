@@ -9,23 +9,24 @@ const Envelope = ({ onComplete }) => {
     if (isOpen) return; // Prevent double clicks
     setIsOpen(true);
     // Wait for the envelope flap to open and the letter to slide up
-    setTimeout(onComplete, 2200); 
+    setTimeout(onComplete, 5000); 
   };
 
   // Rustic Kraft Paper Colors
-  const kraftBase = '#C29C71';   // Side flaps
-  const kraftShadow = '#B0885A'; // Bottom flap
-  const kraftTop = '#A67C4D';    // Top flap (slightly darker to show shadow)
-  const kraftInside = '#8C663D'; // Inside the envelope
+  const kraftBase = '#D2B48C';     // Warm parchment
+  const kraftShadow = '#B38B5D';   // Rich shadow tone
+  const kraftTop = '#9C6B3F';      // Deep royal brown
+  const kraftInside = '#6E4B2A';   // Dark elegant interior
 
   return (
     <div 
       onClick={handleOpen}
       style={{
         position: 'relative',
+        perspective: '1200px',
         width: '100%',
         height: '100vh',
-        backgroundColor: kraftInside,
+        background: 'radial-gradient(circle at center, #7A5432 0%, #4E341D 100%)',
         overflow: 'hidden',
         cursor: 'pointer',
         margin: 0,
@@ -61,9 +62,11 @@ const Envelope = ({ onComplete }) => {
           color: '#B59461',
           lineHeight: '1.2'
         }}>
-          <span style={{ fontSize: '36px' }}>Anuruddha</span>
-          <span style={{ fontSize: '24px', margin: '4px 0' }}>&</span>
-          <span style={{ fontSize: '36px' }}>Yasara</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40px' }}>
+            <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Anuruddha</span>
+            <span style={{ fontSize: '24px', margin: '4px 0', color: '#B59461' }}>&</span>
+            <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Yasara</span>
+          </div>
         </div>
       </motion.div>
 
@@ -72,6 +75,7 @@ const Envelope = ({ onComplete }) => {
         position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
         backgroundColor: kraftBase,
         clipPath: 'polygon(0 0, 50% 50%, 0 100%)',
+        boxShadow: 'inset 0 0 40px rgba(0,0,0,0.15)',
         zIndex: 10
       }} />
 
@@ -80,6 +84,7 @@ const Envelope = ({ onComplete }) => {
         position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
         backgroundColor: kraftBase,
         clipPath: 'polygon(100% 0, 50% 50%, 100% 100%)',
+        boxShadow: 'inset 0 0 40px rgba(0,0,0,0.15)',
         zIndex: 10
       }} />
 
@@ -95,17 +100,18 @@ const Envelope = ({ onComplete }) => {
       <motion.div 
         style={{
           position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh',
-          backgroundColor: kraftTop,
+          background: `linear-gradient(to bottom, #B38B5D, ${kraftTop})`,
+          boxShadow: '0 15px 40px rgba(0,0,0,0.4)',
           clipPath: 'polygon(0 0, 100% 0, 50% 52%)', 
           transformOrigin: 'top',
           zIndex: isOpen ? 0 : 20 
         }}
         animate={isOpen ? { rotateX: 180 } : { rotateX: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
+        transition={{ duration: 5, ease: [0.65, 0, 0.35, 1] }}
       />
 
       {/* 6. The Wax Seal Stamp */}
-      {!isOpen && (
+      
         <div
           style={{
             position: 'absolute',
@@ -113,7 +119,7 @@ const Envelope = ({ onComplete }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 30
+            zIndex: 50
           }}
         >
           <motion.img
@@ -132,7 +138,7 @@ const Envelope = ({ onComplete }) => {
             transition={{ type: "spring", stiffness: 300 }}
           />
         </div>
-      )}
+      
 
       {/* 7. The BOLD BLACK Text as requested */}
       {!isOpen && (
