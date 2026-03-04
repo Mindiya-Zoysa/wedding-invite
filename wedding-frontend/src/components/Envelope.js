@@ -16,7 +16,6 @@ const Envelope = ({ onComplete }) => {
   const kraftBase = '#D2B48C';     // Warm parchment
   const kraftShadow = '#B38B5D';   // Rich shadow tone
   const kraftTop = '#9C6B3F';      // Deep royal brown
-  const kraftInside = '#6E4B2A';   // Dark elegant interior
 
   return (
     <div 
