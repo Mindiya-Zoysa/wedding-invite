@@ -7,9 +7,18 @@ use App\Models\Rsvp;
 use Illuminate\Http\Request;
 use App\Exports\RsvpExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RsvpController extends Controller
 {
+    // --- NEW: Fetch all RSVPs for the Dashboard ---
+    public function index()
+    {
+        // Get all RSVPs, newest first
+        $rsvps = \App\Models\Rsvp::orderBy('created_at', 'desc')->get();
+        return response()->json($rsvps);
+    }
+
     public function store(Request $request)
     {
         // 1. Validate the incoming data
@@ -37,5 +46,21 @@ class RsvpController extends Controller
     {
         // This instantly generates and downloads the file as 'wedding_rsvps.xlsx'
         return Excel::download(new RsvpExport, 'wedding_rsvps.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        // 1. Fetch guests split by side
+        $yasaraGuests = Rsvp::where('side', 'yasara')->orderBy('name', 'asc')->get();
+        $anuruddhaGuests = Rsvp::where('side', 'anuruddha')->orderBy('name', 'asc')->get();
+
+        // 2. Load the HTML blade view we just created, passing the data in
+        $pdf = Pdf::loadView('pdf.rsvps', [
+            'yasaraGuests' => $yasaraGuests,
+            'anuruddhaGuests' => $anuruddhaGuests
+        ]);
+
+        // 3. Download the generated PDF
+        return $pdf->download('Wedding_Guest_List.pdf');
     }
 }
