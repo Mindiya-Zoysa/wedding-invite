@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import HeartCover from './components/HeartCover';
-import Envelope from './components/Envelope'; // Make sure this file exists from before
+import Envelope from './components/Envelope';
 import MainPage from './components/MainPage';
 import Dashboard from './components/Dashboard';
 

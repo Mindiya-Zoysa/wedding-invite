@@ -88,12 +88,12 @@ const Dashboard = () => {
             <p style={{ color: '#777', margin: 0 }}>Manage your RSVPs for Yasara & Anuruddha's Wedding</p>
           </div>
           
-            {/* <a 
+            <a 
                 href="http://127.0.0.1:8000/api/rsvp/export" 
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#B59461', color: 'white', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(181, 148, 97, 0.2)' }}
             >
                 <Download size={20} /> Export to Excel
-            </a> */}
+            </a>
 
             <a 
                 href="http://127.0.0.1:8000/api/rsvp/export-pdf" 
@@ -102,23 +102,6 @@ const Dashboard = () => {
                 <FileText size={18} /> Export to PDF
             </a>
         </div>
-
-        {/* Action Buttons */}
-        {/* <div style={{ display: 'flex', gap: '10px' }}>
-            <a 
-                href="http://127.0.0.1:8000/api/rsvp/export" 
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#28a745', color: 'white', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', boxShadow: '0 4px 6px rgba(40, 167, 69, 0.2)' }}
-            >
-                <Download size={18} /> Export to Excel
-            </a>
-
-            <a 
-                href="http://127.0.0.1:8000/api/rsvp/export-pdf" 
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#dc3545', color: 'white', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', boxShadow: '0 4px 6px rgba(220, 53, 69, 0.2)' }}
-            >
-                <FileText size={18} /> Export to PDF
-            </a>
-        </div> */}
 
         {/* Statistics Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
