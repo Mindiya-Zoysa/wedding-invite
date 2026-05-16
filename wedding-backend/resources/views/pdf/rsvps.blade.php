@@ -19,34 +19,49 @@
 <body>
 
     <h1>Yasara & Anuruddha</h1>
-    <h2>Bride's Side (Yasara)</h2>
+    <h2>Bride's Side (Yasara) 
+        <span style="font-size: 14px; color: #888;">
+            {{ $filter === 'yes' ? '- Attending Only' : ($filter === 'no' ? '- Declined Only' : '') }}
+        </span>
+    </h2>
     
     <div class="stats">
-        Total Attending: {{ $yasaraGuests->where('attending', 'yes')->count() }}
+        Total Attending: {{ $yasaraGuests->where('attending', 'yes')->sum('guest_count') }}
     </div>
 
     <table>
         <thead>
             <tr>
-                <th width="20%">Name</th>
-                <th width="20%">Phone</th>
-                <th width="15%">Attending</th>
-                <th width="45%">Message</th>
+                <th width="20%">Primary Guest</th>
+                <th width="15%">Phone</th>
+                <th width="10%">Party</th>
+                <th width="30%">Extra Names</th>
+                <th width="25%">Message</th>
             </tr>
         </thead>
         <tbody>
             @forelse($yasaraGuests as $guest)
                 <tr>
-                    <td>{{ $guest->name }}</td>
+                    <td>
+                        {{ $guest->name }} 
+                        @if($guest->attending === 'no')
+                            <br><span class="attending-no">(Declined)</span>
+                        @endif
+                    </td>
                     <td>{{ $guest->phone }}</td>
-                    <td class="{{ $guest->attending === 'yes' ? 'attending-yes' : 'attending-no' }}">
-                        {{ ucfirst($guest->attending) }}
+                    <td style="text-align: center; font-weight: bold;">{{ $guest->guest_count }}</td>
+                    <td>
+                        @if(is_array($guest->additional_guests) && count($guest->additional_guests) > 0)
+                            {{ implode(', ', $guest->additional_guests) }}
+                        @else
+                            -
+                        @endif
                     </td>
                     <td>{{ $guest->message ?? '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" style="text-align: center;">No guests registered for this side yet.</td>
+                    <td colspan="5" style="text-align: center;">No guests registered for this side yet.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -55,34 +70,49 @@
     <div class="page-break"></div>
 
     <h1>Yasara & Anuruddha</h1>
-    <h2>Groom's Side (Anuruddha)</h2>
+    <h2>Groom's Side (Anuruddha)
+        <span style="font-size: 14px; color: #888;">
+            {{ $filter === 'yes' ? '- Attending Only' : ($filter === 'no' ? '- Declined Only' : '') }}
+        </span>
+    </h2>
     
     <div class="stats">
-        Total Attending: {{ $anuruddhaGuests->where('attending', 'yes')->count() }}
+        Total Attending: {{ $anuruddhaGuests->where('attending', 'yes')->sum('guest_count') }}
     </div>
 
     <table>
         <thead>
             <tr>
-                <th width="20%">Name</th>
-                <th width="20%">Phone</th>
-                <th width="15%">Attending</th>
-                <th width="45%">Message</th>
+                <th width="20%">Primary Guest</th>
+                <th width="15%">Phone</th>
+                <th width="10%">Party</th>
+                <th width="30%">Extra Names</th>
+                <th width="25%">Message</th>
             </tr>
         </thead>
         <tbody>
             @forelse($anuruddhaGuests as $guest)
                 <tr>
-                    <td>{{ $guest->name }}</td>
+                    <td>
+                        {{ $guest->name }} 
+                        @if($guest->attending === 'no')
+                            <br><span class="attending-no">(Declined)</span>
+                        @endif
+                    </td>
                     <td>{{ $guest->phone }}</td>
-                    <td class="{{ $guest->attending === 'yes' ? 'attending-yes' : 'attending-no' }}">
-                        {{ ucfirst($guest->attending) }}
+                    <td style="text-align: center; font-weight: bold;">{{ $guest->guest_count }}</td>
+                    <td>
+                        @if(is_array($guest->additional_guests) && count($guest->additional_guests) > 0)
+                            {{ implode(', ', $guest->additional_guests) }}
+                        @else
+                            -
+                        @endif
                     </td>
                     <td>{{ $guest->message ?? '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" style="text-align: center;">No guests registered for this side yet.</td>
+                    <td colspan="5" style="text-align: center;">No guests registered for this side yet.</td>
                 </tr>
             @endforelse
         </tbody>

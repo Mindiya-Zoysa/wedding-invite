@@ -43,11 +43,20 @@ const Dashboard = () => {
     fetchRsvps();
   }, [isAuthenticated]);
 
-  // Calculate Statistics
-  const totalAttending = rsvps.filter(r => r.attending === 'yes').length;
+  // Calculate Statistics 
+  const totalAttending = rsvps.filter(r => r.attending === 'yes').reduce((sum, r) => sum + parseInt(r.guest_count || 1), 0);
   const totalDeclined = rsvps.filter(r => r.attending === 'no').length;
-  const yasaraSide = rsvps.filter(r => r.attending === 'yes' && r.side === 'yasara').length;
-  const anuruddhaSide = rsvps.filter(r => r.attending === 'yes' && r.side === 'anuruddha').length;
+  const yasaraSide = rsvps.filter(r => r.attending === 'yes' && r.side === 'yasara').reduce((sum, r) => sum + parseInt(r.guest_count || 1), 0);
+  const anuruddhaSide = rsvps.filter(r => r.attending === 'yes' && r.side === 'anuruddha').reduce((sum, r) => sum + parseInt(r.guest_count || 1), 0);
+
+  // --- NEW: FILTER STATE & LOGIC ---
+  const [filter, setFilter] = useState('all'); // Options: 'all', 'yes', 'no'
+
+  // This creates a new array of guests based on which button you clicked
+  const filteredRsvps = rsvps.filter(rsvp => {
+    if (filter === 'all') return true;
+    return rsvp.attending === filter;
+  });
 
   // --- 1. RENDER LOGIN SCREEN (If not authenticated) ---
   if (!isAuthenticated) {
@@ -88,19 +97,22 @@ const Dashboard = () => {
             <p style={{ color: '#777', margin: 0 }}>Manage your RSVPs for Yasara & Anuruddha's Wedding</p>
           </div>
           
-            <a 
-                href="http://127.0.0.1:8000/api/rsvp/export" 
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#B59461', color: 'white', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(181, 148, 97, 0.2)' }}
-            >
-                <Download size={20} /> Export to Excel
-            </a>
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <a 
+                href={`http://127.0.0.1:8000/api/rsvp/export?filter=${filter}`} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#28a745', color: 'white', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', boxShadow: '0 4px 6px rgba(40, 167, 69, 0.2)' }}
+              >
+                <Download size={18} /> Excel
+              </a>
 
-            <a 
-                href="http://127.0.0.1:8000/api/rsvp/export-pdf" 
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#B59461', color: 'white', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(181, 148, 97, 0.2)' }}
-            >
-                <FileText size={18} /> Export to PDF
-            </a>
+              <a 
+                href={`http://127.0.0.1:8000/api/rsvp/export-pdf?filter=${filter}`} 
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#dc3545', color: 'white', padding: '10px 20px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '14px', boxShadow: '0 4px 6px rgba(220, 53, 69, 0.2)' }}
+              >
+                <FileText size={18} /> PDF
+              </a>
+            </div>
         </div>
 
         {/* Statistics Cards */}
@@ -123,6 +135,30 @@ const Dashboard = () => {
           ))}
         </div>
 
+        {/* --- NEW: FILTER BUTTONS --- */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+          {['all', 'yes', 'no'].map((f) => (
+            <button 
+              key={f}
+              onClick={() => setFilter(f)}
+              style={{
+                padding: '8px 20px',
+                borderRadius: '20px',
+                border: '1px solid #B59461',
+                backgroundColor: filter === f ? '#B59461' : 'transparent',
+                color: filter === f ? 'white' : '#B59461',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                textTransform: 'capitalize',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {f === 'all' ? 'All Guests' : f === 'yes' ? 'Attending Only' : 'Declined Only'}
+            </button>
+          ))}
+        </div>
+
         {/* Guest Data Table */}
         <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
           {loading ? (
@@ -132,36 +168,46 @@ const Dashboard = () => {
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead style={{ backgroundColor: '#F8F9FA', borderBottom: '2px solid #EAEAEA' }}>
                   <tr>
-                    <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Name</th>
+                    <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Primary Name</th>
                     <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Phone</th>
                     <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Side</th>
-                    <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Attending</th>
+                    <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px', textAlign: 'center' }}>Party Size</th>
+                    <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Extra Guests</th>
                     <th style={{ padding: '15px 20px', color: '#555', fontSize: '14px' }}>Message</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rsvps.map((rsvp) => (
-                    <tr key={rsvp.id} style={{ borderBottom: '1px solid #EAEAEA' }}>
-                      <td style={{ padding: '15px 20px', fontWeight: 'bold', color: '#333' }}>{rsvp.name}</td>
+                  {/* IMPORTANT: We now map over filteredRsvps instead of rsvps */}
+                  {filteredRsvps.map((rsvp) => (
+                    <tr key={rsvp.id} style={{ borderBottom: '1px solid #EAEAEA', backgroundColor: rsvp.attending === 'no' ? '#fcfcfc' : 'white' }}>
+                      <td style={{ padding: '15px 20px', fontWeight: 'bold', color: rsvp.attending === 'no' ? '#aaa' : '#333' }}>
+                        {rsvp.name} {rsvp.attending === 'no' && <span style={{ color: '#d93025', fontSize: '12px', fontWeight: 'normal', marginLeft: '5px' }}>(Declined)</span>}
+                      </td>
                       <td style={{ padding: '15px 20px', color: '#666' }}>{rsvp.phone}</td>
                       <td style={{ padding: '15px 20px' }}>
                         <span style={{ backgroundColor: rsvp.side === 'yasara' ? '#ffe8f0' : '#e8f4ff', color: rsvp.side === 'yasara' ? '#e83e8c' : '#007bff', padding: '5px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', textTransform: 'capitalize' }}>
                           {rsvp.side}
                         </span>
                       </td>
-                      <td style={{ padding: '15px 20px' }}>
-                        <span style={{ backgroundColor: rsvp.attending === 'yes' ? '#e6f4ea' : '#fce8e6', color: rsvp.attending === 'yes' ? '#1e8e3e' : '#d93025', padding: '5px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', textTransform: 'capitalize' }}>
-                          {rsvp.attending}
-                        </span>
+                      <td style={{ padding: '15px 20px', textAlign: 'center', fontWeight: 'bold', fontSize: '16px', color: '#B59461' }}>
+                        {rsvp.guest_count}
                       </td>
-                      <td style={{ padding: '15px 20px', color: '#666', fontSize: '13px', maxWidth: '250px' }}>
+                      <td style={{ padding: '15px 20px', color: '#666', fontSize: '13px' }}>
+                        {rsvp.additional_guests && rsvp.additional_guests.length > 0 
+                          ? rsvp.additional_guests.join(', ') 
+                          : '-'}
+                      </td>
+                      <td style={{ padding: '15px 20px', color: '#666', fontSize: '13px', maxWidth: '200px' }}>
                         {rsvp.message || '-'}
                       </td>
                     </tr>
                   ))}
-                  {rsvps.length === 0 && (
+                  {/* Show a friendly message if the filter returns zero results */}
+                  {filteredRsvps.length === 0 && (
                     <tr>
-                      <td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: '#888' }}>No RSVPs yet.</td>
+                      <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
+                        No guests found for this filter.
+                      </td>
                     </tr>
                   )}
                 </tbody>

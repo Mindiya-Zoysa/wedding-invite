@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
-import { Instagram, Facebook, Twitter, MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp } from 'lucide-react';
+import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2 } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
@@ -100,78 +100,168 @@ const MainPage = () => {
     }
   };
 
-  // --- STATE FOR TABS & RSVP ---
+  // --- STATE FOR TABS & DYNAMIC RSVP ---
   const [activeTab, setActiveTab] = useState('guests');
   const [copied, setCopied] = useState(false);
   
   const [rsvpData, setRsvpData] = useState({
+    side: '',  
     name: '',
-    phone: '', // Changed from email to phone
-    side: '',  // Added to track which side they are from
-    attending: 'yes',
-    message: ''
+    phone: '', 
+    message: '',
+    attending: '', // Starts empty so they have to choose
+    guestCount: '1',
+    additionalGuests: [] // Stores extra names
   });
 
   const handleRsvpChange = (e) => {
     setRsvpData({ ...rsvpData, [e.target.name]: e.target.value });
   };
 
-  const handleRsvpSubmit = async (e) => {
-    e.preventDefault();
+  // Handles changing the 1, 2, 3, 4, 5+ Dropdown
+  const handleGuestCountChange = (e) => {
+    const val = e.target.value;
+    let newCount = val === '5+' ? 4 : parseInt(val) - 1; // Subtract 1 because the primary guest is already counted
     
+    const currentGuests = [...rsvpData.additionalGuests];
+    let newGuests = [];
+
+    // Grow or shrink the input array while keeping typed names safe
+    if (newCount > currentGuests.length) {
+      const additions = Array(newCount - currentGuests.length).fill('');
+      newGuests = [...currentGuests, ...additions];
+    } else {
+      newGuests = currentGuests.slice(0, newCount);
+    }
+
+    setRsvpData({ ...rsvpData, guestCount: val, additionalGuests: newGuests });
+  };
+
+  // Updates the name inside the dynamic extra inputs
+  const handleAdditionalGuestChange = (index, value) => {
+    const updated = [...rsvpData.additionalGuests];
+    updated[index] = value;
+    setRsvpData({ ...rsvpData, additionalGuests: updated });
+  };
+
+  // The "+ Add another guest" button function
+  const addAnotherGuest = () => {
+    setRsvpData({
+      ...rsvpData,
+      guestCount: '5+',
+      additionalGuests: [...rsvpData.additionalGuests, '']
+    });
+  };
+
+  // Removes a specific guest row
+  const removeAdditionalGuest = (indexToRemove) => {
+    // Filter out the guest at the specific index
+    const updatedGuests = rsvpData.additionalGuests.filter((_, index) => index !== indexToRemove);
+    
+    // Auto-update the dropdown count to keep the UI in sync
+    const newTotal = updatedGuests.length + 1;
+    const newCountStr = newTotal >= 5 ? '5+' : newTotal.toString();
+
+    setRsvpData({ 
+      ...rsvpData, 
+      guestCount: newCountStr, 
+      additionalGuests: updatedGuests 
+    });
+  };
+
+  // The Master Submit Engine
+  const executeSubmit = async (finalData) => {
+    // 1. Validation Check
+    if (!finalData.side || !finalData.name || !finalData.phone) {
+      Swal.fire({ title: 'Missing Info', text: 'Please fill in your Side, Name, and Phone number before deciding.', icon: 'warning', confirmButtonColor: '#B59461' });
+      return;
+    }
+
     try {
+      // (This endpoint will need to be updated in the backend later to catch the array!)
       const response = await fetch('http://127.0.0.1:8000/api/rsvp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(rsvpData) 
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(finalData) 
       });
-
-      const result = await response.json();
 
       if (response.ok) {
-        // --- BEAUTIFUL SUCCESS ALERT ---
-        Swal.fire({
-          title: 'Thank You!',
-          text: `We have received your RSVP, ${rsvpData.name}.`,
-          icon: 'success',
-          confirmButtonColor: '#B59461',
-          confirmButtonText: 'Great!'
-        });
-        
-        // Clear the form after successful submission
-        setRsvpData({
-          name: '',
-          phone: '',
-          side: '',
-          attending: 'yes',
-          message: ''
-        });
-        
+        Swal.fire({ title: 'Thank You!', text: `Your RSVP has been received, ${finalData.name}.`, icon: 'success', confirmButtonColor: '#B59461' });
+        // Reset form
+        setRsvpData({ side: '', name: '', phone: '', message: '', attending: '', guestCount: '1', additionalGuests: [] });
       } else {
-        // --- VALIDATION ERROR ALERT ---
-        Swal.fire({
-          title: 'Oops...',
-          text: 'There was a problem submitting your RSVP. Please check the form.',
-          icon: 'error',
-          confirmButtonColor: '#B59461'
-        });
-        console.error("Validation Errors:", result.errors);
+        Swal.fire({ title: 'Oops...', text: 'There was a problem submitting your RSVP.', icon: 'error', confirmButtonColor: '#B59461' });
       }
-
     } catch (error) {
-      // --- NETWORK ERROR ALERT ---
-      Swal.fire({
-        title: 'Connection Error',
-        text: 'Could not connect to the server. Please try again later.',
-        icon: 'error',
-        confirmButtonColor: '#B59461'
-      });
-      console.error("Network Error:", error);
+      Swal.fire({ title: 'Connection Error', text: 'Could not connect to the server.', icon: 'error', confirmButtonColor: '#B59461' });
     }
   };
+
+  const handleYesSubmit = () => {
+    executeSubmit({ ...rsvpData, attending: 'yes' });
+  };
+
+  const handleNoSubmit = () => {
+    setRsvpData({ ...rsvpData, attending: 'no' }); // Update UI visually
+    executeSubmit({ ...rsvpData, attending: 'no' }); // Send instantly
+  };
+
+  // const handleRsvpSubmit = async (e) => {
+  //   e.preventDefault();
+    
+  //   try {
+  //     const response = await fetch('http://127.0.0.1:8000/api/rsvp', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Accept': 'application/json',
+  //       },
+  //       body: JSON.stringify(rsvpData) 
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (response.ok) {
+  //       // --- BEAUTIFUL SUCCESS ALERT ---
+  //       Swal.fire({
+  //         title: 'Thank You!',
+  //         text: `We have received your RSVP, ${rsvpData.name}.`,
+  //         icon: 'success',
+  //         confirmButtonColor: '#B59461',
+  //         confirmButtonText: 'Great!'
+  //       });
+        
+  //       // Clear the form after successful submission
+  //       setRsvpData({
+  //         name: '',
+  //         phone: '',
+  //         side: '',
+  //         attending: 'yes',
+  //         message: ''
+  //       });
+        
+  //     } else {
+  //       // --- VALIDATION ERROR ALERT ---
+  //       Swal.fire({
+  //         title: 'Oops...',
+  //         text: 'There was a problem submitting your RSVP. Please check the form.',
+  //         icon: 'error',
+  //         confirmButtonColor: '#B59461'
+  //       });
+  //       console.error("Validation Errors:", result.errors);
+  //     }
+
+  //   } catch (error) {
+  //     // --- NETWORK ERROR ALERT ---
+  //     Swal.fire({
+  //       title: 'Connection Error',
+  //       text: 'Could not connect to the server. Please try again later.',
+  //       icon: 'error',
+  //       confirmButtonColor: '#B59461'
+  //     });
+  //     console.error("Network Error:", error);
+  //   }
+  // };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText("1234567890"); 
@@ -383,44 +473,28 @@ const MainPage = () => {
         </div>
       </section>
 
-      {/* --- RSVP SECTION (UPDATED) --- */}
+      {/* --- RSVP SECTION (DYNAMIC) --- */}
       <section ref={rsvpRef} style={{ padding: '80px 20px', backgroundColor: '#F9F6F0' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Join Us</p>
           <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '10px' }}>RSVP</h2>
           <p style={{ color: '#666', fontSize: '14px', marginBottom: '40px' }}>Please let us know if you can join our celebration</p>
 
-          <form onSubmit={handleRsvpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
+          {/* Changed to prevent default form submits so our custom buttons work */}
+          <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
             
-            {/* NEW: Which Side Selection */}
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '10px' }}>Which side are you from? *</label>
               <div style={{ display: 'flex', gap: '15px' }}>
                 <button 
-                  type="button" 
-                  onClick={() => setRsvpData({ ...rsvpData, side: 'yasara' })} 
-                  style={{ 
-                    flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease',
-                    border: rsvpData.side === 'yasara' ? '2px solid #B59461' : '1px solid #DDD', 
-                    backgroundColor: rsvpData.side === 'yasara' ? '#FDFBF7' : 'white', 
-                    color: rsvpData.side === 'yasara' ? '#B59461' : '#555', 
-                    fontWeight: rsvpData.side === 'yasara' ? 'bold' : 'normal',
-                    boxShadow: rsvpData.side === 'yasara' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none'
-                  }}
+                  type="button" onClick={() => setRsvpData({ ...rsvpData, side: 'yasara' })} 
+                  style={{ flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease', border: rsvpData.side === 'yasara' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.side === 'yasara' ? '#FDFBF7' : 'white', color: rsvpData.side === 'yasara' ? '#B59461' : '#555', fontWeight: rsvpData.side === 'yasara' ? 'bold' : 'normal', boxShadow: rsvpData.side === 'yasara' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none' }}
                 >
                   Bride's Side (Yasara)
                 </button>
                 <button 
-                  type="button" 
-                  onClick={() => setRsvpData({ ...rsvpData, side: 'anuruddha' })} 
-                  style={{ 
-                    flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease',
-                    border: rsvpData.side === 'anuruddha' ? '2px solid #B59461' : '1px solid #DDD', 
-                    backgroundColor: rsvpData.side === 'anuruddha' ? '#FDFBF7' : 'white', 
-                    color: rsvpData.side === 'anuruddha' ? '#B59461' : '#555', 
-                    fontWeight: rsvpData.side === 'anuruddha' ? 'bold' : 'normal',
-                    boxShadow: rsvpData.side === 'anuruddha' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none'
-                  }}
+                  type="button" onClick={() => setRsvpData({ ...rsvpData, side: 'anuruddha' })} 
+                  style={{ flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease', border: rsvpData.side === 'anuruddha' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.side === 'anuruddha' ? '#FDFBF7' : 'white', color: rsvpData.side === 'anuruddha' ? '#B59461' : '#555', fontWeight: rsvpData.side === 'anuruddha' ? 'bold' : 'normal', boxShadow: rsvpData.side === 'anuruddha' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none' }}
                 >
                   Groom's Side (Anuruddha)
                 </button>
@@ -429,13 +503,17 @@ const MainPage = () => {
 
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
-              <input type="text" name="name" required value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+              <input type="text" name="name" value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
             </div>
 
-            {/* NEW: Telephone Input */}
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Telephone / WhatsApp No *</label>
-              <input type="tel" name="phone" required value={rsvpData.phone} onChange={handleRsvpChange} placeholder="+94 77 123 4567" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+              <input type="tel" name="phone" value={rsvpData.phone} onChange={handleRsvpChange} placeholder="+94 77 123 4567" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+            </div>
+
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Message for the couple (Optional)</label>
+              <textarea name="message" value={rsvpData.message} onChange={handleRsvpChange} placeholder="Share your wishes or any special requests..." rows="3" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', fontFamily: 'inherit', boxSizing: 'border-box' }}></textarea>
             </div>
 
             <div>
@@ -444,20 +522,74 @@ const MainPage = () => {
                 <button type="button" onClick={() => setRsvpData({ ...rsvpData, attending: 'yes' })} style={{ flex: 1, padding: '12px', borderRadius: '5px', border: rsvpData.attending === 'yes' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.attending === 'yes' ? '#FDFBF7' : 'white', cursor: 'pointer', color: '#555', fontWeight: rsvpData.attending === 'yes' ? 'bold' : 'normal' }}>
                   Yes, I'll be there!
                 </button>
-                <button type="button" onClick={() => setRsvpData({ ...rsvpData, attending: 'no' })} style={{ flex: 1, padding: '12px', borderRadius: '5px', border: rsvpData.attending === 'no' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.attending === 'no' ? '#FDFBF7' : 'white', cursor: 'pointer', color: '#555', fontWeight: rsvpData.attending === 'no' ? 'bold' : 'normal' }}>
+                {/* Clicking No instantly triggers the submit logic */}
+                <button type="button" onClick={handleNoSubmit} style={{ flex: 1, padding: '12px', borderRadius: '5px', border: rsvpData.attending === 'no' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.attending === 'no' ? '#FDFBF7' : 'white', cursor: 'pointer', color: '#555', fontWeight: rsvpData.attending === 'no' ? 'bold' : 'normal' }}>
                   Sorry, I can't attend
                 </button>
               </div>
             </div>
 
-            <div>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Message for the couple (Optional)</label>
-              <textarea name="message" value={rsvpData.message} onChange={handleRsvpChange} placeholder="Share your wishes or any special requests..." rows="4" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', fontFamily: 'inherit', boxSizing: 'border-box' }}></textarea>
-            </div>
+            {/* --- THE DYNAMIC "YES" SECTION --- */}
+            {rsvpData.attending === 'yes' && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ display: 'flex', flexDirection: 'column', gap: '20px', overflow: 'hidden' }}>
+                
+                <div style={{ padding: '20px', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #EAEAEA', marginTop: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>How many guests in your party? (Including yourself)</label>
+                  <select value={rsvpData.guestCount} onChange={handleGuestCountChange} style={{ width: '100%', padding: '12px', marginTop: '10px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', backgroundColor: 'white' }}>
+                    <option value="1">Just me (1)</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                    <option value="5+">5 or more Guests</option>
+                  </select>
 
-            <button type="submit" style={{ backgroundColor: '#B59461', color: 'white', padding: '15px', border: 'none', borderRadius: '5px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px', transition: 'background-color 0.3s' }}>
-              Submit RSVP
-            </button>
+                  {/* Render extra name inputs dynamically */}
+                  {rsvpData.additionalGuests.length > 0 && (
+                    <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                      {rsvpData.additionalGuests.map((guest, index) => (
+                        <div key={index} style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
+                          
+                          {/* Name Input */}
+                          <div style={{ flex: 1 }}>
+                            <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#888' }}>Guest {index + 2} Name</label>
+                            <input 
+                              type="text" 
+                              value={guest} 
+                              onChange={(e) => handleAdditionalGuestChange(index, e.target.value)} 
+                              placeholder={`Full name of Guest ${index + 2}`} 
+                              style={{ width: '100%', padding: '10px', marginTop: '5px', borderRadius: '5px', border: '1px dashed #CCC', fontSize: '14px', boxSizing: 'border-box' }} 
+                            />
+                          </div>
+
+                          {/* Delete Row Button */}
+                          <button 
+                            type="button" 
+                            onClick={() => removeAdditionalGuest(index)} 
+                            style={{ backgroundColor: '#fce8e6', color: '#dc3545', border: 'none', borderRadius: '5px', padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '41px', transition: 'background-color 0.2s' }}
+                            title="Remove Guest"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add extra guest button (Only shows if they selected at least 2 guests) */}
+                  {rsvpData.additionalGuests.length >= 1 && (
+                    <button type="button" onClick={addAnotherGuest} style={{ width: '100%', backgroundColor: 'transparent', border: '1px dashed #B59461', color: '#B59461', padding: '10px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginTop: '15px' }}>
+                      + Add another guest manually
+                    </button>
+                  )}
+                </div>
+
+                <button type="button" onClick={handleYesSubmit} style={{ backgroundColor: '#B59461', color: 'white', padding: '15px', border: 'none', borderRadius: '5px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', transition: 'background-color 0.3s' }}>
+                  Submit RSVP
+                </button>
+              </motion.div>
+            )}
+
           </form>
         </div>
       </section>

@@ -21,19 +21,36 @@ class RsvpController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validate the incoming data
+        // 1. Validate the incoming data (now including the array of guests)
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'side' => 'required|string|in:yasara,anuruddha',
             'attending' => 'required|string|in:yes,no',
-            'message' => 'nullable|string'
+            'message' => 'nullable|string',
+            'guestCount' => 'nullable', // From React (can be "1", "2", or "5+")
+            'additionalGuests' => 'nullable|array', // The array of extra names
+            'additionalGuests.*' => 'nullable|string|max:255' // Each name in the array must be a string
         ]);
 
-        // 2. Save to the database
-        $rsvp = Rsvp::create($validated);
+        // 2. Map React variables to Database columns
+        // We convert "5+" to 5 so the database doesn't crash on an integer column
+        $totalCount = $request->input('guestCount') === '5+' ? 5 : (int) $request->input('guestCount', 1);
 
-        // 3. Return a success response to React
+        $rsvpData = [
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'side' => $validated['side'],
+            'attending' => $validated['attending'],
+            'message' => $validated['message'] ?? null,
+            'guest_count' => $validated['attending'] === 'no' ? 0 : $totalCount,
+            'additional_guests' => $validated['additionalGuests'] ?? [],
+        ];
+
+        // 3. Save to the database
+        $rsvp = Rsvp::create($rsvpData);
+
+        // 4. Return success
         return response()->json([
             'status' => 'success',
             'message' => 'RSVP saved successfully!',
@@ -41,26 +58,43 @@ class RsvpController extends Controller
         ], 201);
     }
 
-    // --- NEW EXPORT FUNCTION ---
-    public function export() 
+    // --- EXPORT EXCEL FUNCTION ---
+    public function export(Request $request) 
     {
-        // This instantly generates and downloads the file as 'wedding_rsvps.xlsx'
-        return Excel::download(new RsvpExport, 'wedding_rsvps.xlsx');
+        $filter = $request->query('filter', 'all'); // Get the filter, default to 'all'
+        
+        return Excel::download(new RsvpExport($filter), 'wedding_rsvps.xlsx');
     }
 
-    public function exportPdf()
+    // --- EXPORT PDF FUNCTION ---
+    public function exportPdf(Request $request)
     {
-        // 1. Fetch guests split by side
-        $yasaraGuests = Rsvp::where('side', 'yasara')->orderBy('name', 'asc')->get();
-        $anuruddhaGuests = Rsvp::where('side', 'anuruddha')->orderBy('name', 'asc')->get();
+        $filter = $request->query('filter', 'all'); // Get the filter from React
 
-        // 2. Load the HTML blade view we just created, passing the data in
-        $pdf = Pdf::loadView('pdf.rsvps', [
+        // 1. Start the base queries
+        $yasaraQuery = \App\Models\Rsvp::where('side', 'yasara')->orderBy('name', 'asc');
+        $anuruddhaQuery = \App\Models\Rsvp::where('side', 'anuruddha')->orderBy('name', 'asc');
+
+        // 2. Apply the filters if requested
+        if ($filter === 'yes') {
+            $yasaraQuery->where('attending', 'yes');
+            $anuruddhaQuery->where('attending', 'yes');
+        } elseif ($filter === 'no') {
+            $yasaraQuery->where('attending', 'no');
+            $anuruddhaQuery->where('attending', 'no');
+        }
+
+        // 3. Execute the queries
+        $yasaraGuests = $yasaraQuery->get();
+        $anuruddhaGuests = $anuruddhaQuery->get();
+
+        // 4. Load the PDF View
+        $pdf = app('dompdf.wrapper')->loadView('pdf.rsvps', [
             'yasaraGuests' => $yasaraGuests,
-            'anuruddhaGuests' => $anuruddhaGuests
+            'anuruddhaGuests' => $anuruddhaGuests,
+            'filter' => $filter // Pass the filter to the blade file so we can update the title
         ]);
 
-        // 3. Download the generated PDF
         return $pdf->download('Wedding_Guest_List.pdf');
     }
 }

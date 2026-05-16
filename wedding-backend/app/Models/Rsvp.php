@@ -9,6 +9,14 @@ class Rsvp extends Model
 {
     use HasFactory;
 
-    // Allow mass assignment for these columns
-    protected $fillable = ['name', 'phone', 'side', 'attending', 'message'];
+    // Allow mass assignment
+    protected $fillable = [
+        'name', 'phone', 'side', 'attending', 'message', 
+        'guest_count', 'additional_guests'
+    ];
+
+    // Automatically handle the JSON array conversion
+    protected $casts = [
+        'additional_guests' => 'array',
+    ];
 }

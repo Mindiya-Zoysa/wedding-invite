@@ -17,7 +17,12 @@ return new class extends Migration
             $table->string('phone');
             $table->string('side'); // 'yasara' or 'anuruddha'
             $table->string('attending'); // 'yes' or 'no'
-            $table->text('message')->nullable(); // Guests might not leave a message
+            $table->text('message')->nullable(); 
+            
+            // --- NEW COLUMNS ---
+            $table->integer('guest_count')->default(1);
+            $table->json('additional_guests')->nullable(); // Stores the array of names
+            
             $table->timestamps();
         });
     }
