@@ -267,21 +267,24 @@ const MainPage = ({ onGoToProgram }) => {
           
           <div style="min-width: 650px; padding: 10px 0;">
             
-            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
-              <div style="width: 20px; height: 24px; border: 1.5px solid #888; border-top-left-radius: 8px; border-top-right-radius: 8px; margin-bottom: 5px;"></div>
-              <div style="background-color: #B59461; color: white; padding: 12px 50px; border-radius: 6px; font-weight: bold; font-size: 13px; letter-spacing: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                REGISTRAR
+            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 30px;">
+              <div style="flex: 1 1 0;"></div> <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div style="width: 20px; height: 24px; border: 1.5px solid #888; border-top-left-radius: 8px; border-top-right-radius: 8px; margin-bottom: 5px;"></div>
+                <div style="background-color: #B59461; color: white; padding: 12px 50px; border-radius: 6px; font-weight: bold; font-size: 13px; letter-spacing: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                  REGISTRAR
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 8px;">
+                  <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Bride"></div>
+                  <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Groom"></div>
+                </div>
+                <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 8px 0 0 0; font-weight: bold; color: #333;">Bride & Groom</p>
               </div>
-              <div style="display: flex; gap: 15px; margin-top: 8px;">
-                <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Bride"></div>
-                <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Groom"></div>
-              </div>
-              <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 8px 0 0 0; font-weight: bold; color: #333;">Bride & Groom</p>
-            </div>
 
-            <div style="display: flex; justify-content: space-between; gap: 15px; position: relative;">
+              <div style="flex: 1 1 0;"></div> </div>
+
+            <div style="display: flex; justify-content: center; gap: 15px; position: relative;">
               
-              <div style="flex: 1; text-align: center;">
+              <div style="flex: 1 1 0; text-align: center;">
                 <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Rathnasekara</h4>
                 <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Bride's Side</p>
                 
@@ -302,7 +305,7 @@ const MainPage = ({ onGoToProgram }) => {
                 <div style="height: 100%; width: 2px; background-color: rgba(181, 148, 97, 0.2); border-radius: 2px;"></div>
               </div>
 
-              <div style="flex: 1; text-align: center;">
+              <div style="flex: 1 1 0; text-align: center;">
                 <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Heenatigala</h4>
                 <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Groom's Side</p>
                 
@@ -320,7 +323,8 @@ const MainPage = ({ onGoToProgram }) => {
               </div>
 
             </div>
-          </div> </div>
+          </div>
+        </div>
       `,
       width: '750px',
       confirmButtonColor: '#B59461',
