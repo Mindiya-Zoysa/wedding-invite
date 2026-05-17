@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
-import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2 } from 'lucide-react';
+import ProgramModal from './ProgramModal';
+import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
@@ -68,10 +69,11 @@ const CountdownTimer = ({ targetDate }) => {
   );
 };
 
-const MainPage = () => {
+const MainPage = ({ onGoToProgram }) => {
   // --- REFS & SCROLL STATE FOR FLOATING BUTTON ---
   const rsvpRef = useRef(null);
   const [isAtRsvp, setIsAtRsvp] = useState(false);
+  const [showProgramModal, setShowProgramModal] = useState(false);
 
   useEffect(() => {
     const currentRef = rsvpRef.current;
@@ -206,69 +208,141 @@ const MainPage = () => {
     executeSubmit({ ...rsvpData, attending: 'no' }); // Send instantly
   };
 
-  // const handleRsvpSubmit = async (e) => {
-  //   e.preventDefault();
-    
-  //   try {
-  //     const response = await fetch('http://127.0.0.1:8000/api/rsvp', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //       },
-  //       body: JSON.stringify(rsvpData) 
-  //     });
-
-  //     const result = await response.json();
-
-  //     if (response.ok) {
-  //       // --- BEAUTIFUL SUCCESS ALERT ---
-  //       Swal.fire({
-  //         title: 'Thank You!',
-  //         text: `We have received your RSVP, ${rsvpData.name}.`,
-  //         icon: 'success',
-  //         confirmButtonColor: '#B59461',
-  //         confirmButtonText: 'Great!'
-  //       });
-        
-  //       // Clear the form after successful submission
-  //       setRsvpData({
-  //         name: '',
-  //         phone: '',
-  //         side: '',
-  //         attending: 'yes',
-  //         message: ''
-  //       });
-        
-  //     } else {
-  //       // --- VALIDATION ERROR ALERT ---
-  //       Swal.fire({
-  //         title: 'Oops...',
-  //         text: 'There was a problem submitting your RSVP. Please check the form.',
-  //         icon: 'error',
-  //         confirmButtonColor: '#B59461'
-  //       });
-  //       console.error("Validation Errors:", result.errors);
-  //     }
-
-  //   } catch (error) {
-  //     // --- NETWORK ERROR ALERT ---
-  //     Swal.fire({
-  //       title: 'Connection Error',
-  //       text: 'Could not connect to the server. Please try again later.',
-  //       icon: 'error',
-  //       confirmButtonColor: '#B59461'
-  //     });
-  //     console.error("Network Error:", error);
-  //   }
-  // };
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText("1234567890"); 
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
   
+  const showDressCode = () => {
+    Swal.fire({
+      title: '<span style="font-family: serif; font-size: 36px; color: #4A4A4A;">Dress Code</span>',
+      html: `
+        <div style="font-family: sans-serif; color: #666; line-height: 1.6; padding: 10px 0;">
+          <p style="font-size: 15px; margin-bottom: 25px;">We would love to see our family and friends dress up with us!</p>
+          
+          <div style="padding: 20px; border: 1px dashed #B59461; border-radius: 8px; background-color: #FDFBF7;">
+            <p style="font-family: serif; font-weight: bold; color: #B59461; font-size: 24px; margin: 0 0 10px 0;">
+              Formal / Traditional Attire
+            </p>
+            <p style="margin: 0; font-size: 14px; color: #888;">
+              If you wish to coordinate with our wedding palette, we welcome soft pastels, earthy tones, or hints of gold.
+            </p>
+          </div>
+        </div>
+      `,
+      confirmButtonColor: '#B59461',
+      confirmButtonText: 'Can\'t wait!',
+      width: '450px',
+      padding: '2em',
+      background: '#fff',
+      backdrop: 'rgba(0,0,0,0.5)',
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown animate__faster'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp animate__faster'
+      }
+    });
+  };
+
+  // --- TIMELINE MODAL FUNCTIONS ---
+  const showSeating = () => {
+    const generateSeats = (rows, cols) => {
+      let html = '';
+      for (let r = 0; r < rows; r++) {
+        html += '<div style="display: flex; gap: 6px; justify-content: center; margin-bottom: 6px;">';
+        for (let c = 0; c < cols; c++) {
+          html += '<div style="width: 18px; height: 22px; border: 1.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; background-color: #FDFBF7;"></div>';
+        }
+        html += '</div>';
+      }
+      return html;
+    };
+
+    Swal.fire({
+      title: '<span style="font-family: serif; font-size: 28px; color: #B59461;">Church Seating</span>',
+      html: `
+        <div style="font-family: sans-serif; color: #555; padding: 0 10px; max-height: 75vh; overflow-y: auto; overflow-x: auto;">
+          
+          <div style="min-width: 650px; padding: 10px 0;">
+            
+            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+              <div style="width: 20px; height: 24px; border: 1.5px solid #888; border-top-left-radius: 8px; border-top-right-radius: 8px; margin-bottom: 5px;"></div>
+              <div style="background-color: #B59461; color: white; padding: 12px 50px; border-radius: 6px; font-weight: bold; font-size: 13px; letter-spacing: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                REGISTRAR
+              </div>
+              <div style="display: flex; gap: 15px; margin-top: 8px;">
+                <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Bride"></div>
+                <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Groom"></div>
+              </div>
+              <p style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 8px 0 0 0; font-weight: bold; color: #333;">Bride & Groom</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; gap: 15px; position: relative;">
+              
+              <div style="flex: 1; text-align: center;">
+                <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Rathnasekara</h4>
+                <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Bride's Side</p>
+                
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 0 0 10px 0;">Bridesmaids</p>
+                ${generateSeats(1, 3)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Parents & Family</p>
+                ${generateSeats(3, 5)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Family & Relatives</p>
+                ${generateSeats(3, 6)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Friends & Guests</p>
+                ${generateSeats(3, 6)}
+              </div>
+
+              <div style="width: 40px; display: flex; justify-content: center;">
+                <div style="height: 100%; width: 2px; background-color: rgba(181, 148, 97, 0.2); border-radius: 2px;"></div>
+              </div>
+
+              <div style="flex: 1; text-align: center;">
+                <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Heenatigala</h4>
+                <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Groom's Side</p>
+                
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 0 0 10px 0;">Best Man / Groomsmen</p>
+                ${generateSeats(1, 3)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Parents & Family</p>
+                ${generateSeats(3, 5)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Family & Relatives</p>
+                ${generateSeats(3, 6)}
+
+                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Friends & Guests</p>
+                ${generateSeats(3, 6)}
+              </div>
+
+            </div>
+          </div> </div>
+      `,
+      width: '750px',
+      confirmButtonColor: '#B59461',
+      confirmButtonText: 'Perfect',
+      background: '#fff',
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown animate__faster'
+      }
+    });
+  };
+
+  // --- TIMELINE DATA ARRAY ---
+  // We define this here so the JSX below stays clean and easy to read
+  const timelineEvents = [
+    { time: "8:30 AM", title: "Expected Arrival of Guests", desc: "Find your designated place to witness our union.", action: showSeating, actionText: "View Seating", actionIcon: <Users size={14} /> },
+    { time: "8:45 AM", title: "Groom's Arrival", desc: "The groom will arrive at the church" },
+    { time: "8:55 AM", title: "Bride's Arrival", desc: "The bride will arrive at the church" },
+    { time: "9:00 AM", title: "Wedding Service", desc: "Join us in prayer and song.", action: () => setShowProgramModal(true), actionText: "View Program", actionIcon: <BookOpen size={14} /> },
+    { time: "10:10 AM", title: "Wedding Registration", desc: "Two hearts, two traditions, one lifelong journey." },
+    { time: "10:20 AM", title: "Wedding March", desc: "The ceremony ended with smiles, blessings, and the joyful beginning of married life." },
+    { time: "10:30 AM", title: "Blessings for the couple", desc: "Give your wishes to the couple and take a photo" }
+  ];
 
   return (
     <div style={{ backgroundColor: '#FDFBF7', margin: 0, padding: 0, overflowX: 'hidden' }}>
@@ -437,37 +511,59 @@ const MainPage = () => {
         <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '50px' }}>Timeline</h2>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+          {/* Center Vertical Line */}
           <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '2px', backgroundColor: '#EAEAEA', transform: 'translateX(-50%)' }} />
 
-          {[
-            { time: "8:30 AM", title: "Expected Arrival of Guests", desc: "Click for your Seat" },
-            { time: "8:45 AM", title: "Groom's Arrival", desc: "The groom will arrive at the church" },
-            { time: "8:55 AM", title: "Bride's Arrival", desc: "The bride will arrive at the church" },
-            { time: "9:00 AM", title: "Wedding Service", desc: "Click for Hymnal" },
-            { time: "10:10 AM", title: "Wedding Registration", desc: "Two hearts, two traditions, one lifelong journey." },
-            { time: "10:20 AM", title: "Wedding March", desc: "The ceremony ended with smiles, blessings, and the joyful beginning of married life." },
-            { time: "10.30 AM", title: "Blessings for the couple", desc: "Give your wishes to the couple and take a photo" }
-          ].map((item, index) => (
+          {timelineEvents.map((item, index) => (
             <div key={index} style={{ display: 'flex', width: '100%', marginBottom: '30px', position: 'relative', zIndex: 2 }}>
+              
+              {/* LEFT SIDE CONTENT */}
               <div style={{ flex: 1, textAlign: 'right', paddingRight: '30px' }}>
                 {index % 2 === 0 ? (
                   <>
                     <span style={{ fontWeight: 'bold', color: '#B59461', fontSize: '14px' }}>{item.time}</span>
                     <h4 style={{ margin: '5px 0', fontSize: '18px', fontFamily: 'serif', color: '#333' }}>{item.title}</h4>
                     <p style={{ fontSize: '13px', color: '#888', margin: 0 }}>{item.desc}</p>
+                    
+                    {/* Render Interactive Button if an action exists */}
+                    {item.action && (
+                      <button 
+                        onClick={item.action}
+                        style={{ backgroundColor: '#f9f6f0', border: '1px solid #B59461', color: '#B59461', padding: '6px 15px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '10px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
+                      >
+                        {item.actionIcon}
+                        {item.actionText}
+                      </button>
+                    )}
                   </>
                 ) : null}
               </div>
-              <div style={{ width: '16px', height: '16px', backgroundColor: '#B59461', borderRadius: '50%', border: '4px solid #FDFBF7', margin: '0 auto', marginTop: '5px' }} />
+
+              {/* CENTER DOT */}
+              <div style={{ width: '16px', height: '16px', backgroundColor: '#B59461', borderRadius: '50%', border: '4px solid #FDFBF7', margin: '0 auto', marginTop: '5px', zIndex: 3 }} />
+
+              {/* RIGHT SIDE CONTENT */}
               <div style={{ flex: 1, textAlign: 'left', paddingLeft: '30px' }}>
                 {index % 2 !== 0 ? (
                   <>
                     <span style={{ fontWeight: 'bold', color: '#B59461', fontSize: '14px' }}>{item.time}</span>
                     <h4 style={{ margin: '5px 0', fontSize: '18px', fontFamily: 'serif', color: '#333' }}>{item.title}</h4>
                     <p style={{ fontSize: '13px', color: '#888', margin: 0 }}>{item.desc}</p>
+                    
+                    {/* Render Interactive Button if an action exists */}
+                    {item.action && (
+                      <button 
+                        onClick={item.action}
+                        style={{ backgroundColor: '#f9f6f0', border: '1px solid #B59461', color: '#B59461', padding: '6px 15px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '10px', fontWeight: 'bold', transition: 'background-color 0.2s' }}
+                      >
+                        {item.actionIcon}
+                        {item.actionText}
+                      </button>
+                    )}
                   </>
                 ) : null}
               </div>
+
             </div>
           ))}
         </div>
@@ -701,6 +797,41 @@ const MainPage = () => {
         </p>
       </footer>
 
+      {/* --- NEW: DRESS CODE FLOATING BUTTON --- */}
+      <motion.button
+        onClick={showDressCode}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          position: 'fixed',
+          bottom: '40px', // Sits perfectly above the 60px RSVP button
+          left: '30px',
+          height: '45px',
+          padding: '0 20px',
+          borderRadius: '25px',
+          backgroundColor: '#FDFBF7',
+          color: '#B59461',
+          border: '1px solid #B59461',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+          zIndex: 1000,
+          fontWeight: 'bold',
+          fontSize: '13px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          fontFamily: 'sans-serif'
+        }}
+      >
+        <Sparkles size={16} />
+        Dress Code
+      </motion.button>
+
       {/* --- NEW: FLOATING ACTION BUTTON --- */}
       <motion.button
         onClick={scrollToRsvpOrTop}
@@ -729,7 +860,12 @@ const MainPage = () => {
         {isAtRsvp ? <ArrowUp size={28} /> : <Mail size={28} />}
       </motion.button>
 
+      {/* --- INJECT THE MODAL --- */}
+      {showProgramModal && (
+        <ProgramModal onClose={() => setShowProgramModal(false)} />
+      )}
     </div>
+    
   );
 };
 
