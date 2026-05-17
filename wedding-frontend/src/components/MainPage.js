@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import ProgramModal from './ProgramModal';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen, Music, X, Calendar, Download } from 'lucide-react';
+import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen, Music, Calendar } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
