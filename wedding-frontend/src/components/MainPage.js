@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
 import ProgramModal from './ProgramModal';
-import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen, Music, X, Calendar, Download } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
@@ -103,8 +105,29 @@ const MainPage = ({ onGoToProgram }) => {
   };
 
   // --- STATE FOR TABS & DYNAMIC RSVP ---
-  const [activeTab, setActiveTab] = useState('guests');
+  const [activeTab, setActiveTab] = useState('hymns');
   const [copied, setCopied] = useState(false);
+  // --- INVITATION CARD STATE & PDF GENERATOR ---
+  const [finalGuestNames, setFinalGuestNames] = useState('Guest'); 
+  const cardRef = useRef(null);
+
+  const downloadInvitationPdf = async (safeFilename) => {
+    const element = cardRef.current;
+    if (!element) return;
+
+    // Take a high-quality screenshot of the hidden card
+    const canvas = await html2canvas(element, { scale: 3, useCORS: true, backgroundColor: '#E6D5C3' });
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: [canvas.width / 3, canvas.height / 3]
+    });
+
+    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 3, canvas.height / 3);
+    pdf.save(`Wedding_Invitation_${safeFilename}.pdf`);
+  };
   
   const [rsvpData, setRsvpData] = useState({
     side: '',  
@@ -173,14 +196,12 @@ const MainPage = ({ onGoToProgram }) => {
 
   // The Master Submit Engine
   const executeSubmit = async (finalData) => {
-    // 1. Validation Check
     if (!finalData.side || !finalData.name || !finalData.phone) {
       Swal.fire({ title: 'Missing Info', text: 'Please fill in your Side, Name, and Phone number before deciding.', icon: 'warning', confirmButtonColor: '#B59461' });
       return;
     }
 
     try {
-      // (This endpoint will need to be updated in the backend later to catch the array!)
       const response = await fetch('http://127.0.0.1:8000/api/rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -188,7 +209,44 @@ const MainPage = ({ onGoToProgram }) => {
       });
 
       if (response.ok) {
-        Swal.fire({ title: 'Thank You!', text: `Your RSVP has been received, ${finalData.name}.`, icon: 'success', confirmButtonColor: '#B59461' });
+        if (finalData.attending === 'yes') {
+          // Format the names
+          let namesArray = [finalData.name];
+          if (finalData.additionalGuests && finalData.additionalGuests.length > 0) {
+            const validGuests = finalData.additionalGuests.filter(g => g.trim() !== '');
+            namesArray = [...namesArray, ...validGuests];
+          }
+
+          let namesString = finalData.name;
+          if (namesArray.length === 2) {
+            namesString = `${namesArray[0]} & ${namesArray[1]}`;
+          } else if (namesArray.length > 2) {
+            const last = namesArray.pop();
+            namesString = `${namesArray.join(', ')} & ${last}`;
+          }
+
+          // Update the hidden card
+          setFinalGuestNames(namesString);
+          
+          const safeName = namesString.replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "_");
+
+          // Show success message letting them know it's downloading
+          Swal.fire({ 
+            title: 'Thank You!', 
+            text: `Your RSVP has been received, ${finalData.name}. Your digital invitation is downloading!`, 
+            icon: 'success', 
+            confirmButtonColor: '#B59461' 
+          });
+
+          // Wait 500ms for React to write the names into the hidden DOM, then download!
+          setTimeout(() => {
+            downloadInvitationPdf(safeName);
+          }, 500);
+
+        } else {
+          Swal.fire({ title: 'Thank You', text: `We will miss you, ${finalData.name}.`, icon: 'success', confirmButtonColor: '#B59461' });
+        }
+
         // Reset form
         setRsvpData({ side: '', name: '', phone: '', message: '', attending: '', guestCount: '1', additionalGuests: [] });
       } else {
@@ -207,7 +265,7 @@ const MainPage = ({ onGoToProgram }) => {
     setRsvpData({ ...rsvpData, attending: 'no' }); // Update UI visually
     executeSubmit({ ...rsvpData, attending: 'no' }); // Send instantly
   };
-
+  
   const copyToClipboard = () => {
     navigator.clipboard.writeText("1234567890"); 
     setCopied(true);
@@ -333,6 +391,45 @@ const MainPage = ({ onGoToProgram }) => {
       showClass: {
         popup: 'animate__animated animate__fadeInDown animate__faster'
       }
+    });
+  };
+
+  // --- WEDDING HYMNS DATA & FUNCTION ---
+  const weddingHymns = [
+    {
+      title: "Entrance Hymn",
+      name: "All Are Welcome",
+      lyrics: "Let us build a house where love can dwell<br/>And all can safely live,<br/>A place where saints and children tell<br/>How hearts learn to forgive."
+    },
+    {
+      title: "Offertory Hymn",
+      name: "Take Our Bread",
+      lyrics: "Take our bread, we ask you,<br/>Take our hearts, we love you,<br/>Take our lives, oh Father,<br/>We are yours, we are yours."
+    },
+    {
+      title: "Communion Hymn",
+      name: "One Bread, One Body",
+      lyrics: "One bread, one body,<br/>One Lord of all,<br/>One cup of blessing which we bless.<br/>And we, though many,<br/>Throughout the earth,<br/>We are one body in this one Lord."
+    },
+    {
+      title: "Recessional Hymn",
+      name: "Joyful, Joyful, We Adore Thee",
+      lyrics: "Joyful, joyful, we adore Thee,<br/>God of glory, Lord of love;<br/>Hearts unfold like flowers before Thee,<br/>Opening to the sun above."
+    }
+  ];
+
+  const openHymnModal = (hymn) => {
+    Swal.fire({
+      title: `<span style="font-family: serif; font-size: 28px; color: #B59461;">${hymn.title}</span>`,
+      html: `
+        <div style="font-family: sans-serif; color: #555; line-height: 1.8; padding: 10px;">
+          <p style="font-weight: bold; font-size: 18px; color: #333; margin-top: 0;">"${hymn.name}"</p>
+          <p style="font-style: italic; font-size: 15px;">${hymn.lyrics}</p>
+        </div>
+      `,
+      confirmButtonColor: '#B59461',
+      confirmButtonText: 'Close',
+      background: '#FDFBF7'
     });
   };
 
@@ -696,8 +793,10 @@ const MainPage = ({ onGoToProgram }) => {
 
       {/* --- INTERACTIVE TABS SECTION --- */}
       <section style={{ padding: '60px 20px', backgroundColor: '#FDFBF7', textAlign: 'center' }}>
+        
+        {/* TAB BUTTONS */}
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '40px' }}>
-          {['guests', 'gallery', 'contributions'].map((tab) => (
+          {['hymns', 'gallery', 'contributions'].map((tab) => (
             <button 
               key={tab} 
               onClick={() => setActiveTab(tab)}
@@ -710,31 +809,58 @@ const MainPage = ({ onGoToProgram }) => {
                 cursor: 'pointer',
                 fontSize: '14px',
                 fontWeight: 'bold',
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                transition: 'all 0.3s'
               }}
             >
-              {tab === 'guests' ? 'Who\'s Coming' : tab === 'gallery' ? 'Wedding Gallery' : 'Contributions'}
+              {tab === 'hymns' ? 'Wedding Hymns' : tab === 'gallery' ? 'Wedding Gallery' : 'Contributions'}
             </button>
           ))}
         </div>
 
         <div style={{ maxWidth: '600px', margin: '0 auto', minHeight: '200px' }}>
-          {activeTab === 'guests' && (
+          
+          {/* THE NEW HYMNS TAB CONTENT */}
+          {activeTab === 'hymns' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <Users size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
-              <h3 style={{ fontSize: '24px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '5px' }}>Who's Coming</h3>
-              <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>Join these wonderful people in celebrating with us.</p>
+              <Music size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
+              <h3 style={{ fontSize: '24px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '5px' }}>Wedding Hymns</h3>
+              <p style={{ color: '#888', fontSize: '14px', marginBottom: '30px' }}>Follow along and lift your voices with us during the Mass.</p>
               
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '15px' }}>
-                {['Kamal', 'Nimali', 'Saman', 'Ruwan', 'Amali', 'Kasun'].map((name, i) => (
-                  <div key={i} style={{ backgroundColor: '#E8C595', color: '#fff', padding: '10px 20px', borderRadius: '30px', fontSize: '14px', fontWeight: 'bold' }}>
-                    {name}
-                  </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+                {weddingHymns.map((hymn, i) => (
+                  <motion.button 
+                    key={i} 
+                    whileHover={{ scale: 1.02, backgroundColor: '#B59461', color: '#fff' }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => openHymnModal(hymn)}
+                    style={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #B59461', 
+                      color: '#B59461', 
+                      padding: '15px 25px', 
+                      borderRadius: '8px', 
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      width: '100%', 
+                      maxWidth: '400px', 
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 10px rgba(181, 148, 97, 0.05)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '5px'
+                    }}
+                  >
+                    <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8 }}>{hymn.title}</span>
+                    <span>{hymn.name}</span>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
           )}
 
+          {/* THE GALLERY TAB CONTENT */}
           {activeTab === 'gallery' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Camera size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
@@ -752,6 +878,7 @@ const MainPage = ({ onGoToProgram }) => {
             </motion.div>
           )}
 
+          {/* THE CONTRIBUTIONS TAB CONTENT */}
           {activeTab === 'contributions' && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Heart size={32} color="#B59461" style={{ margin: '0 auto 15px auto' }} />
@@ -864,10 +991,81 @@ const MainPage = ({ onGoToProgram }) => {
         {isAtRsvp ? <ArrowUp size={28} /> : <Mail size={28} />}
       </motion.button>
 
+      {/* --- HIDDEN INVITATION CARD FOR PDF EXPORT --- */}
+      {/* This renders off-screen so html2canvas can capture it without bothering the user */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+        <div 
+          ref={cardRef} 
+          style={{ 
+            backgroundColor: '#E6D5C3', // Warm tan background
+            padding: '15px', 
+            borderRadius: '12px', 
+            width: '420px', // Fixed width so the PDF is always perfectly sized
+            boxSizing: 'border-box'
+          }}
+        >
+          {/* The Inner Arch Design */}
+          <div style={{ 
+            backgroundColor: '#FDFBF7', 
+            borderTopLeftRadius: '180px', 
+            borderTopRightRadius: '180px', 
+            borderBottomLeftRadius: '8px', 
+            borderBottomRightRadius: '8px', 
+            padding: '60px 30px 40px 30px', 
+            textAlign: 'center',
+            border: '1px solid #D5B99B'
+          }}>
+            
+            <p style={{ fontSize: '10px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', margin: '0 0 20px 0' }}>
+              Together with their families
+            </p>
+            
+            <h2 style={{ fontFamily: 'serif', fontSize: '38px', color: '#8A5A44', margin: '0 0 30px 0', fontWeight: 'normal' }}>
+              Yasara <span style={{ fontSize: '28px' }}>&</span> Anuruddha
+            </h2>
+
+            <p style={{ fontSize: '13px', color: '#666', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              Joyfully invite
+            </p>
+
+            {/* Dynamic Names */}
+            <div style={{ backgroundColor: '#fdf7f0', border: '1px dashed #D5B99B', padding: '15px', borderRadius: '8px', margin: '0 auto 20px auto' }}>
+              <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#B59461', fontFamily: 'serif', margin: 0, lineHeight: '1.4' }}>
+                {finalGuestNames}
+              </p>
+            </div>
+
+            <p style={{ fontSize: '13px', color: '#666', marginBottom: '30px', letterSpacing: '1px' }}>
+              to their wedding celebration
+            </p>
+
+            {/* Date & Location Split */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #EAEAEA', paddingTop: '25px', color: '#555' }}>
+              
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <Calendar size={22} color="#B59461" style={{ marginBottom: '8px' }} />
+                <p style={{ fontSize: '12px', margin: '0 0 4px 0', fontWeight: 'bold' }}>July 24, 2026</p>
+                <p style={{ fontSize: '11px', margin: 0, color: '#888' }}>8:30 AM</p>
+              </div>
+              
+              <div style={{ width: '1px', height: '40px', backgroundColor: '#EAEAEA' }}></div>
+              
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <MapPin size={22} color="#B59461" style={{ marginBottom: '8px' }} />
+                <p style={{ fontSize: '12px', margin: '0 0 4px 0', fontWeight: 'bold' }}>All Saints' Church</p>
+                <p style={{ fontSize: '11px', margin: 0, color: '#888' }}>Borella</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* --- INJECT THE MODAL --- */}
       {showProgramModal && (
         <ProgramModal onClose={() => setShowProgramModal(false)} />
       )}
+
     </div>
     
   );
