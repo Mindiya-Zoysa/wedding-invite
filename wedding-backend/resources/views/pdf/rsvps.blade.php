@@ -18,8 +18,8 @@
 </head>
 <body>
 
-    <h1>Yasara & Anuruddha</h1>
-    <h2>Bride's Side (Yasara) 
+    <h1>Yashara & Anuruddha</h1>
+    <h2>Bride's Side (Yashara) 
         <span style="font-size: 14px; color: #888;">
             {{ $filter === 'yes' ? '- Attending Only' : ($filter === 'no' ? '- Declined Only' : '') }}
         </span>
@@ -69,7 +69,7 @@
 
     <div class="page-break"></div>
 
-    <h1>Yasara & Anuruddha</h1>
+    <h1>Yashara & Anuruddha</h1>
     <h2>Groom's Side (Anuruddha)
         <span style="font-size: 14px; color: #888;">
             {{ $filter === 'yes' ? '- Attending Only' : ($filter === 'no' ? '- Declined Only' : '') }}

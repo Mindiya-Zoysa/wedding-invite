@@ -94,7 +94,7 @@ const Dashboard = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
           <div>
             <h1 style={{ fontSize: '32px', color: '#333', margin: '0 0 5px 0', fontFamily: 'serif' }}>Guest Dashboard</h1>
-            <p style={{ color: '#777', margin: 0 }}>Manage your RSVPs for Yasara & Anuruddha's Wedding</p>
+            <p style={{ color: '#777', margin: 0 }}>Manage your RSVPs for Yashara & Anuruddha's Wedding</p>
           </div>
           
             {/* Action Buttons */}
@@ -119,7 +119,7 @@ const Dashboard = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px' }}>
           {[
             { title: 'Total Attending', count: totalAttending, icon: <UserCheck size={24} color="#28a745" /> },
-            { title: "Yasara's Side", count: yasaraSide, icon: <Heart size={24} color="#e83e8c" /> },
+            { title: "Yashara's Side", count: yasaraSide, icon: <Heart size={24} color="#e83e8c" /> },
             { title: "Anuruddha's Side", count: anuruddhaSide, icon: <Users size={24} color="#007bff" /> },
             { title: 'Not Attending', count: totalDeclined, icon: <UserX size={24} color="#dc3545" /> }
           ].map((stat, index) => (

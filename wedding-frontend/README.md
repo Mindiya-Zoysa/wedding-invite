@@ -96,7 +96,7 @@ Your `src` folder should look like this:
 src/
 ├── assets/
 │   ├── hero-bg.jpg
-│   ├── yasara.jpg
+│   ├── yashara.jpg
 │   └── anuruddha.jpg
 │
 ├── components/
@@ -164,7 +164,7 @@ At the top of the file:
 
 ```
 const HERO_IMAGE = "/assets/hero-bg.jpg";
-const YASARA_PIC = "/assets/yasara.jpg";
+const YASHARA_PIC = "/assets/yashara.jpg";
 const ANURUDDHA_PIC = "/assets/anuruddha.jpg";
 ```
 

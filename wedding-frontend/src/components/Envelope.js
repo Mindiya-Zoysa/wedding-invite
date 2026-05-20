@@ -64,7 +64,7 @@ const Envelope = ({ onComplete }) => {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
             <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Anuruddha</span>
             <span style={{ fontSize: '24px', margin: '4px 0', color: '#B59461' }}>&</span>
-            <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Yasara</span>
+            <span style={{ fontSize: '36px', fontFamily: "'Great Vibes', cursive", color: '#B59461' }}>Yashara</span>
           </div>
         </div>
       </motion.div>

@@ -79,7 +79,7 @@ const HeartCover = ({ onFinish }) => {
             &
           </span>
           <h1 style={{ fontSize: '32px', fontFamily: 'serif', color: '#4A4A4A', margin: 0, fontWeight: 'normal', letterSpacing: '1px' }}>
-            Yasara
+            Yashara
           </h1>
         </motion.div>
       </div>

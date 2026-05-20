@@ -477,7 +477,7 @@ const MainPage = ({ onGoToProgram }) => {
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, delay: 0.8 }}
             style={{ fontSize: 'clamp(40px, 8vw, 80px)', fontFamily: 'serif', margin: '0 0 20px 0', textShadow: '2px 4px 10px rgba(0,0,0,0.3)' }}
           >
-            Yasara <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)', margin: '0 15px' }}>&</span> Anuruddha
+            Yashara <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)', margin: '0 15px' }}>&</span> Anuruddha
           </motion.h1>
 
           <motion.div 
@@ -537,7 +537,7 @@ const MainPage = ({ onGoToProgram }) => {
               whileHover="hover"
               style={{ position: 'relative', width: '250px', height: '350px', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: 'pointer', backgroundColor: '#fff' }}
             >
-              <img src={YASARA_PIC} alt="Yasara" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+              <img src={YASARA_PIC} alt="Yashara" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
               <motion.div 
                 variants={{ hover: { opacity: 1 } }} initial={{ opacity: 0 }} transition={{ duration: 0.3 }}
                 style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(181, 148, 97, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', color: 'white' }}
@@ -547,7 +547,7 @@ const MainPage = ({ onGoToProgram }) => {
                 </p>
               </motion.div>
             </motion.div>
-            <h3 style={{ fontFamily: 'serif', fontSize: '24px', color: '#4A4A4A', marginTop: '20px', marginBottom: '10px' }}>Yasara</h3>
+            <h3 style={{ fontFamily: 'serif', fontSize: '24px', color: '#4A4A4A', marginTop: '20px', marginBottom: '10px' }}>Yashara</h3>
           </div>
         </div>
       </section>
@@ -586,7 +586,7 @@ const MainPage = ({ onGoToProgram }) => {
 
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '15px' }}>
             <a 
-              href="https://maps.app.goo.gl/BwF1s" 
+              href="https://www.google.com/maps/search/?api=1&query=All+Saints+Church+Borella" 
               target="_blank" 
               rel="noreferrer"
               style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#B59461', color: 'white', padding: '12px 25px', borderRadius: '5px', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}
@@ -595,7 +595,7 @@ const MainPage = ({ onGoToProgram }) => {
             </a>
             
             <a 
-              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding+of+Yasara+%26+Anuruddha&dates=20260724T083000/20260724T113000&details=We+can't+wait+to+celebrate+with+you!&location=All+Saints'+Church,+Borella,+Sri+Lanka" 
+              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Wedding+of+Yashara+%26+Anuruddha&dates=20260724T083000/20260724T113000&details=We+can't+wait+to+celebrate+with+you!&location=All+Saints'+Church,+Borella,+Sri+Lanka" 
               target="_blank" 
               rel="noreferrer"
               style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'transparent', color: '#B59461', border: '1px solid #B59461', padding: '12px 25px', borderRadius: '5px', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}
@@ -706,7 +706,7 @@ const MainPage = ({ onGoToProgram }) => {
                     transition: 'all 0.3s ease'
                   }}
                 >
-                  Bride's Side (Yasara)
+                  Bride's Side (Yashara)
                 </motion.button>
 
                 {/* GROOM'S SIDE BUTTON - BLUE */}
@@ -951,7 +951,8 @@ const MainPage = ({ onGoToProgram }) => {
                 Help us capture the magic! Upload your photos and videos to our shared album.
               </p>
               <a 
-                href="https://photos.google.com/your-album-link" 
+                href="https://photos.app.goo.gl/k1Cn42UDr8KqusKQ8" 
+                
                 target="_blank" rel="noreferrer"
                 style={{ display: 'inline-block', backgroundColor: '#333', color: 'white', padding: '12px 25px', borderRadius: '5px', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}
               >
@@ -989,7 +990,7 @@ const MainPage = ({ onGoToProgram }) => {
       
       {/* Footer */}
       <footer style={{ backgroundColor: '#333', color: 'white', padding: '50px 20px 30px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'serif', margin: 0, fontSize: '28px', color: '#FDFBF7' }}>Yasara & Anuruddha</h2>
+        <h2 style={{ fontFamily: 'serif', margin: 0, fontSize: '28px', color: '#FDFBF7' }}>Yashara & Anuruddha</h2>
         <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#B59461', marginTop: '10px', marginBottom: '30px' }}>
           July 24, 2026
         </p>
@@ -1000,7 +1001,7 @@ const MainPage = ({ onGoToProgram }) => {
         
         {/* Contact Numbers Row */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '15px', fontSize: '14px', color: '#AAA', fontFamily: 'sans-serif' }}>
-          <span>Yasara: +94 78 201 0532</span>
+          <span>Yashara: +94 78 201 0532</span>
           <span style={{ color: '#555' }}>|</span>
           <span>Anuruddha (Sikura): +94 71 653 0165</span>
         </div>
@@ -1104,7 +1105,7 @@ const MainPage = ({ onGoToProgram }) => {
             </p>
             
             <h2 style={{ fontFamily: 'serif', fontSize: '38px', color: '#8A5A44', margin: '0 0 30px 0', fontWeight: 'normal' }}>
-              Yasara <span style={{ fontSize: '28px' }}>&</span> Anuruddha
+              Yashara <span style={{ fontSize: '28px' }}>&</span> Anuruddha
             </h2>
 
             <p style={{ fontSize: '13px', color: '#666', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
