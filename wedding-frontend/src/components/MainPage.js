@@ -281,10 +281,18 @@ const MainPage = ({ onGoToProgram }) => {
           
           <div style="padding: 20px; border: 1px dashed #B59461; border-radius: 8px; background-color: #FDFBF7;">
             <p style="font-family: serif; font-weight: bold; color: #B59461; font-size: 24px; margin: 0 0 10px 0;">
-              Formal / Traditional Attire
+              For Military People
             </p>
             <p style="margin: 0; font-size: 14px; color: #888;">
-              If you wish to coordinate with our wedding palette, we welcome soft pastels, earthy tones, or hints of gold.
+              We proudly welcome our military guests to wear their Ceremonial Dress.
+            </p>
+          </div>
+          <div style="padding: 20px; border: 1px dashed #B59461; border-radius: 8px; background-color: #FDFBF7;">
+            <p style="font-family: serif; font-weight: bold; color: #B59461; font-size: 24px; margin: 0 0 10px 0;">
+              For Other Guest
+            </p>
+            <p style="margin: 0; font-size: 14px; color: #888;">
+              Suits and cocktail dresses are warmly welcomed for our church ceremony.
             </p>
           </div>
         </div>
@@ -683,18 +691,57 @@ const MainPage = ({ onGoToProgram }) => {
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '10px' }}>Which side are you from? *</label>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <button 
-                  type="button" onClick={() => setRsvpData({ ...rsvpData, side: 'yasara' })} 
-                  style={{ flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease', border: rsvpData.side === 'yasara' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.side === 'yasara' ? '#FDFBF7' : 'white', color: rsvpData.side === 'yasara' ? '#B59461' : '#555', fontWeight: rsvpData.side === 'yasara' ? 'bold' : 'normal', boxShadow: rsvpData.side === 'yasara' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none' }}
+                
+                {/* BRIDE'S SIDE BUTTON - PINK */}
+                <motion.button 
+                  type="button" 
+                  onClick={() => setRsvpData({ ...rsvpData, side: 'yasara' })} 
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '15px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    backgroundColor: '#ff99e6', // Bride's Pink
+                    color: '#333', // Dark text for readability
+                    border: '1px solid #e65cc3', // Slightly darker border
+                    // Adds a glowing pink ring if selected
+                    boxShadow: rsvpData.side === 'yasara' ? '0 0 0 4px rgba(255, 102, 217, 0.35)' : 'none',
+                    // Dims the button if the Groom's side is selected
+                    opacity: (rsvpData.side === '' || rsvpData.side === 'yasara') ? 1 : 0.5,
+                    transition: 'all 0.3s ease'
+                  }}
                 >
                   Bride's Side (Yasara)
-                </button>
-                <button 
-                  type="button" onClick={() => setRsvpData({ ...rsvpData, side: 'anuruddha' })} 
-                  style={{ flex: 1, padding: '15px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.3s ease', border: rsvpData.side === 'anuruddha' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.side === 'anuruddha' ? '#FDFBF7' : 'white', color: rsvpData.side === 'anuruddha' ? '#B59461' : '#555', fontWeight: rsvpData.side === 'anuruddha' ? 'bold' : 'normal', boxShadow: rsvpData.side === 'anuruddha' ? '0 4px 10px rgba(181, 148, 97, 0.2)' : 'none' }}
+                </motion.button>
+
+                {/* GROOM'S SIDE BUTTON - BLUE */}
+                <motion.button 
+                  type="button" 
+                  onClick={() => setRsvpData({ ...rsvpData, side: 'anuruddha' })} 
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '15px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    backgroundColor: '#80b3ff', // Groom's Blue
+                    color: '#333', // Dark text for readability
+                    border: '1px solid #5ccae6', // Slightly darker border
+                    // Adds a glowing blue ring if selected
+                    boxShadow: rsvpData.side === 'anuruddha' ? '0 0 0 4px rgba(102, 224, 255, 0.35)' : 'none',
+                    // Dims the button if the Bride's side is selected
+                    opacity: (rsvpData.side === '' || rsvpData.side === 'anuruddha') ? 1 : 0.5,
+                    transition: 'all 0.3s ease'
+                  }}
                 >
                   Groom's Side (Anuruddha)
-                </button>
+                </motion.button>
+
               </div>
             </div>
 
@@ -716,13 +763,56 @@ const MainPage = ({ onGoToProgram }) => {
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555', display: 'block', marginBottom: '10px' }}>Will you attend? *</label>
               <div style={{ display: 'flex', gap: '15px' }}>
-                <button type="button" onClick={() => setRsvpData({ ...rsvpData, attending: 'yes' })} style={{ flex: 1, padding: '12px', borderRadius: '5px', border: rsvpData.attending === 'yes' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.attending === 'yes' ? '#FDFBF7' : 'white', cursor: 'pointer', color: '#555', fontWeight: rsvpData.attending === 'yes' ? 'bold' : 'normal' }}>
+                
+                {/* YES BUTTON - LIGHT PASTEL GREEN */}
+                <motion.button 
+                  type="button" 
+                  onClick={() => setRsvpData({ ...rsvpData, attending: 'yes' })} 
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '12px', 
+                    borderRadius: '5px', 
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    backgroundColor: '#aaff80', // Light Green
+                    color: '#333', // Black/Dark Grey Text
+                    border: '1px solid #c3e6cb',
+                    // Adds a soft green glowing ring if selected
+                    boxShadow: rsvpData.attending === 'yes' ? '0 0 0 4px rgba(40, 167, 69, 0.25)' : 'none',
+                    // Dims the button slightly if the OTHER one is clicked
+                    opacity: (rsvpData.attending === '' || rsvpData.attending === 'yes') ? 1 : 0.5,
+                    transition: 'all 0.3s ease'
+                  }}
+                >
                   Yes, I'll be there!
-                </button>
-                {/* Clicking No instantly triggers the submit logic */}
-                <button type="button" onClick={handleNoSubmit} style={{ flex: 1, padding: '12px', borderRadius: '5px', border: rsvpData.attending === 'no' ? '2px solid #B59461' : '1px solid #DDD', backgroundColor: rsvpData.attending === 'no' ? '#FDFBF7' : 'white', cursor: 'pointer', color: '#555', fontWeight: rsvpData.attending === 'no' ? 'bold' : 'normal' }}>
+                </motion.button>
+
+                {/* NO BUTTON - LIGHT PASTEL RED */}
+                <motion.button 
+                  type="button" 
+                  onClick={handleNoSubmit} 
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ 
+                    flex: 1, 
+                    padding: '12px', 
+                    borderRadius: '5px', 
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    backgroundColor: '#ff6666', // Light Red/Pink
+                    color: '#333', // Black/Dark Grey Text
+                    border: '1px solid #f5c6cb',
+                    // Adds a soft red glowing ring if selected
+                    boxShadow: rsvpData.attending === 'no' ? '0 0 0 4px rgba(220, 53, 69, 0.25)' : 'none',
+                    opacity: (rsvpData.attending === '' || rsvpData.attending === 'no') ? 1 : 0.5,
+                    transition: 'all 0.3s ease'
+                  }}
+                >
                   Sorry, I can't attend
-                </button>
+                </motion.button>
+
               </div>
             </div>
 
@@ -888,11 +978,12 @@ const MainPage = ({ onGoToProgram }) => {
               </p>
 
               <div style={{ backgroundColor: 'white', border: '1px solid #EAEAEA', borderRadius: '8px', padding: '20px', textAlign: 'left', display: 'inline-block', width: '100%', maxWidth: '350px', boxShadow: '0 4px 10px rgba(0,0,0,0.03)' }}>
-                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#555' }}><strong>Bank:</strong> Commercial Bank</p>
-                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#555' }}><strong>Name:</strong> Yasara & Anuruddha</p>
+                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#555' }}><strong>Bank:</strong> Bank of Ceylon</p>
+                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#555' }}><strong>Branch:</strong> Borella Super Grade (38) </p>
+                <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#555' }}><strong>Name:</strong> Anuruddha Heenatigala</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#F9F6F0', padding: '10px 15px', borderRadius: '5px', marginTop: '15px' }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: '16px', color: '#333', letterSpacing: '1px' }}>1234567890</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: '20px', color: '#333', letterSpacing: '1px' }}>0000212015</span>
                   <button onClick={copyToClipboard} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#B59461', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 'bold' }}>
                     {copied ? <CheckCircle size={16} color="green" /> : <Copy size={16} />}
                     {copied ? 'Copied!' : 'Copy'}
