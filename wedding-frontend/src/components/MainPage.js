@@ -337,7 +337,7 @@ const MainPage = ({ onGoToProgram }) => {
               <div style="flex: 1 1 0;"></div> <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div style="width: 20px; height: 24px; border: 1.5px solid #888; border-top-left-radius: 8px; border-top-right-radius: 8px; margin-bottom: 5px;"></div>
                 <div style="background-color: #B59461; color: white; padding: 12px 50px; border-radius: 6px; font-weight: bold; font-size: 13px; letter-spacing: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                  REGISTRAR
+                  PRIEST & ALTAR
                 </div>
                 <div style="display: flex; gap: 15px; margin-top: 8px;">
                   <div style="width: 20px; height: 24px; border: 2.5px solid #B59461; border-top-left-radius: 8px; border-top-right-radius: 8px; background-color: #f9f6f0;" title="Bride"></div>
@@ -351,11 +351,7 @@ const MainPage = ({ onGoToProgram }) => {
             <div style="display: flex; justify-content: center; gap: 15px; position: relative;">
               
               <div style="flex: 1 1 0; text-align: center;">
-                <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Rathnasekara</h4>
                 <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Bride's Side</p>
-                
-                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 0 0 10px 0;">Bridesmaids</p>
-                ${generateSeats(1, 3)}
 
                 <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Parents & Family</p>
                 ${generateSeats(3, 5)}
@@ -372,11 +368,7 @@ const MainPage = ({ onGoToProgram }) => {
               </div>
 
               <div style="flex: 1 1 0; text-align: center;">
-                <h4 style="color: #4A4A4A; margin: 0 0 5px 0; font-family: serif; font-size: 22px;">Heenatigala</h4>
                 <p style="font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 20px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 10px;">Groom's Side</p>
-                
-                <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 0 0 10px 0;">Best Man / Groomsmen</p>
-                ${generateSeats(1, 3)}
 
                 <p style="font-size: 11px; font-weight: bold; color: #B59461; text-transform: uppercase; margin: 25px 0 10px 0;">Parents & Family</p>
                 ${generateSeats(3, 5)}
