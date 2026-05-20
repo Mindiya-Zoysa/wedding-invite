@@ -836,7 +836,7 @@ const MainPage = ({ onGoToProgram }) => {
                               type="text" 
                               value={guest} 
                               onChange={(e) => handleAdditionalGuestChange(index, e.target.value)} 
-                              placeholder={`Full name of Guest ${index + 2}`} 
+                              placeholder={`First & last name of Guest ${index + 2}`} 
                               style={{ width: '100%', padding: '10px', marginTop: '5px', borderRadius: '5px', border: '1px dashed #CCC', fontSize: '14px', boxSizing: 'border-box' }} 
                             />
                           </div>
