@@ -4,12 +4,13 @@ import Swal from 'sweetalert2';
 import ProgramModal from './ProgramModal';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen, Music, Calendar } from 'lucide-react';
+import { MapPin, CalendarPlus, CheckCircle, Copy, Camera, Users, Heart, Mail, ArrowUp, Trash2, Sparkles, BookOpen, Music } from 'lucide-react';
 
 // IMPORTANT: Import your images here! 
 const HERO_IMAGE = "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; 
 const YASARA_PIC = "3d-cartoon-style-character_23-2151034069.avif";
 const ANURUDDHA_PIC = "Gemini_Generated_Image_ia7lbxia7lbxia7l.png";
+const CHURCH_WEDDING_INVITATION = "church_wedding_invitation.jpeg"
 
 // --- HELPER COMPONENT: COUNTDOWN TIMER ---
 const CountdownTimer = ({ targetDate }) => {
@@ -1081,65 +1082,93 @@ const MainPage = ({ onGoToProgram }) => {
         <div 
           ref={cardRef} 
           style={{ 
-            backgroundColor: '#E6D5C3', // Warm tan background
+            backgroundColor: '#E6D5C3', 
             padding: '15px', 
             borderRadius: '12px', 
-            width: '420px', // Fixed width so the PDF is always perfectly sized
+            width: '420px', 
             boxSizing: 'border-box'
           }}
         >
-          {/* The Inner Arch Design */}
+          {/* Invitation Image Template Container */}
           <div style={{ 
-            backgroundColor: '#FDFBF7', 
-            borderTopLeftRadius: '180px', 
-            borderTopRightRadius: '180px', 
-            borderBottomLeftRadius: '8px', 
-            borderBottomRightRadius: '8px', 
-            padding: '60px 30px 40px 30px', 
+            borderRadius: '8px', 
             textAlign: 'center',
-            border: '1px solid #D5B99B'
+            border: '1px solid #D5B99B', 
+            position: 'relative', 
+            overflow: 'hidden', 
+            aspectRatio: '0.707', 
+            backgroundColor: '#FBF8F4', 
           }}>
-            
-            <p style={{ fontSize: '10px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', margin: '0 0 20px 0' }}>
-              Together with their families
-            </p>
-            
-            <h2 style={{ fontFamily: 'serif', fontSize: '38px', color: '#8A5A44', margin: '0 0 30px 0', fontWeight: 'normal' }}>
-              Yashara <span style={{ fontSize: '28px' }}>&</span> Anuruddha
-            </h2>
+            {/* Background Image Template */}
+            <img 
+              src={CHURCH_WEDDING_INVITATION} 
+              alt="Wedding Invitation Template"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                zIndex: 1 
+              }}
+            />
 
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Joyfully invite
-            </p>
+            {/* Dynamic Content Overlays */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 2, 
+              display: 'flex',
+              justifyContent: 'center',
+            }}>
 
-            {/* Dynamic Names */}
-            <div style={{ backgroundColor: '#fdf7f0', border: '1px dashed #D5B99B', padding: '15px', borderRadius: '8px', margin: '0 auto 20px auto' }}>
-              <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#B59461', fontFamily: 'serif', margin: 0, lineHeight: '1.4' }}>
-                {finalGuestNames}
-              </p>
-            </div>
-
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '30px', letterSpacing: '1px' }}>
-              to their wedding celebration
-            </p>
-
-            {/* Date & Location Split */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #EAEAEA', paddingTop: '25px', color: '#555' }}>
-              
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <Calendar size={22} color="#B59461" style={{ marginBottom: '8px' }} />
-                <p style={{ fontSize: '12px', margin: '0 0 4px 0', fontWeight: 'bold' }}>July 24, 2026</p>
-                <p style={{ fontSize: '11px', margin: 0, color: '#888' }}>8:30 AM</p>
+              {/* The "To:" Box - Perfectly Aligned */}
+              <div style={{ 
+                position: 'absolute',
+                top: '49%', /* TIP: Adjust this percentage slightly up or down to perfectly align with your background image! */
+                width: '70%', 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                backgroundColor: 'transparent', /* REMOVED BACKGROUND: Now perfectly see-through */
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: '1px solid #D5B99B', /* Kept the border as requested */
+                boxSizing: 'border-box'
+              }}>
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#624a44', /* MATCHED: Dark grey/black from PDF */
+                  fontFamily: "'CINZEL DECORATIVE', serif", /* MATCHED: Clean sans-serif font from PDF */
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  flexShrink: 0 /* Prevents the "To:" from shrinking */
+                }}>
+                  To:
+                </span>
+                <span style={{ 
+                  /* DYNAMIC FONT SIZE: Shrinks automatically if the name list gets too long! */
+                  fontSize: finalGuestNames.length > 50 ? '11px' : finalGuestNames.length > 25 ? '14px' : '18px', 
+                  fontWeight: 'bold', 
+                  fontFamily: "'CINZEL DECORATIVE', serif", /* MATCHED: Elegant serif font from PDF */
+                  color: '#624a44',
+                  borderBottom: '1px dotted rgba(51, 51, 51, 0.4)', 
+                  paddingBottom: '2px',
+                  minWidth: '150px',
+                  maxWidth: '260px', /* Forces text to wrap before hitting the edges */
+                  display: 'inline-block',
+                  lineHeight: '1.3', /* Keeps multi-line names tight so they don't push down */
+                  textAlign: 'center'
+                }}>
+                  {finalGuestNames || "Guests"} 
+                </span>
               </div>
               
-              <div style={{ width: '1px', height: '40px', backgroundColor: '#EAEAEA' }}></div>
-              
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <MapPin size={22} color="#B59461" style={{ marginBottom: '8px' }} />
-                <p style={{ fontSize: '12px', margin: '0 0 4px 0', fontWeight: 'bold' }}>All Saints' Church</p>
-                <p style={{ fontSize: '11px', margin: 0, color: '#888' }}>Borella</p>
-              </div>
-
             </div>
           </div>
         </div>
