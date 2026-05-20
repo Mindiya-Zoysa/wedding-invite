@@ -740,7 +740,7 @@ const MainPage = ({ onGoToProgram }) => {
 
             <div>
               <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#555' }}>Your Name *</label>
-              <input type="text" name="name" value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your full name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
+              <input type="text" name="name" value={rsvpData.name} onChange={handleRsvpChange} placeholder="Enter your first & last name" style={{ width: '100%', padding: '12px', marginTop: '5px', borderRadius: '5px', border: '1px solid #DDD', fontSize: '14px', boxSizing: 'border-box' }} />
             </div>
 
             <div>
