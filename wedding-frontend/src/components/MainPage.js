@@ -468,8 +468,18 @@ const MainPage = ({ onGoToProgram }) => {
 
         <div style={{ zIndex: 2, padding: '20px' }}>
           <motion.p 
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }}
-            style={{ fontSize: '12px', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '20px' }}
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 1, delay: 0.5 }}
+            style={{ 
+              fontSize: '12px', 
+              letterSpacing: '4px', 
+              textTransform: 'uppercase', 
+              marginBottom: '20px', 
+              // color: '#000000',
+              fontWeight: 600, 
+              fontFamily: 'sans-serif' 
+            }}
           >
             Save The Date
           </motion.p>
@@ -478,7 +488,19 @@ const MainPage = ({ onGoToProgram }) => {
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, delay: 0.8 }}
             style={{ fontSize: 'clamp(40px, 8vw, 80px)', fontFamily: 'serif', margin: '0 0 20px 0', textShadow: '2px 4px 10px rgba(0,0,0,0.3)' }}
           >
-            Yashara <span style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)', margin: '0 15px' }}>&</span> Anuruddha
+            <div>
+              <div style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)' }}>
+                Yashara
+              </div>
+              
+              <div style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)', margin: '10px 0' }}>
+                &
+              </div>
+              
+              <div style={{ fontFamily: "'Great Vibes', cursive", fontSize: 'clamp(30px, 6vw, 60px)' }}>
+                Anuruddha
+              </div>
+            </div>  
           </motion.h1>
 
           <motion.div 
@@ -503,7 +525,7 @@ const MainPage = ({ onGoToProgram }) => {
       </section>
 
       {/* --- ABOUT SECTION --- */}
-      <section style={{ padding: '80px 20px', textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
+      <section style={{ padding: '10px 20px', textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
         <h2 style={{ fontSize: '32px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '10px' }}>Invite you to witness their union</h2>
         <p style={{ color: '#888', fontSize: '14px', maxWidth: '600px', margin: '0 auto 50px auto', lineHeight: '1.6' }}>
           Today marks the beginning of our forever. Built on love, trust, and endless laughter, our journey together is one we cherish deeply.
@@ -554,13 +576,13 @@ const MainPage = ({ onGoToProgram }) => {
       </section>
 
       {/* --- COUNTDOWN SECTION --- */}
-      <section style={{ padding: '60px 20px', backgroundColor: '#F9F6F0', textAlign: 'center' }}>
+      <section style={{ padding: '30px 20px', backgroundColor: '#F9F6F0', textAlign: 'center' }}>
         <h2 style={{ fontSize: '28px', fontFamily: 'serif', color: '#B59461', marginBottom: '40px' }}>The Countdown Begins</h2>
         <CountdownTimer targetDate="2026-07-24T08:30:00" />
       </section>
 
       {/* --- LOCATION & CALENDAR SECTION --- */}
-      <section style={{ padding: '80px 20px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+      <section style={{ padding: '20px 20px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
         <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Join Us At</p>
         <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '40px' }}>The Location</h2>
 
@@ -608,7 +630,7 @@ const MainPage = ({ onGoToProgram }) => {
       </section>
 
       {/* --- TIMELINE SECTION --- */}
-      <section style={{ padding: '80px 20px', backgroundColor: '#FDFBF7', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+      <section style={{ padding: '10px 20px', backgroundColor: '#FDFBF7', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
         <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Our Celebration</p>
         <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '50px' }}>Timeline</h2>
 
@@ -672,7 +694,7 @@ const MainPage = ({ onGoToProgram }) => {
       </section>
 
       {/* --- RSVP SECTION (DYNAMIC) --- */}
-      <section ref={rsvpRef} style={{ padding: '80px 20px', backgroundColor: '#F9F6F0' }}>
+      <section ref={rsvpRef} style={{ padding: '40px 20px', backgroundColor: '#F9F6F0' }}>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: '12px', letterSpacing: '3px', textTransform: 'uppercase', color: '#888', marginBottom: '10px' }}>Join Us</p>
           <h2 style={{ fontSize: '36px', fontFamily: 'serif', color: '#4A4A4A', marginBottom: '10px' }}>RSVP</h2>
